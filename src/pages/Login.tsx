@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const user = await loginService(formData);
-      console.log("user:", user);
+    
       dispatch(login(user));
       localStorage.setItem("token", user.token);
 

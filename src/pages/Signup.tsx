@@ -13,6 +13,7 @@ interface SignupFormData {
 }
 
 function SignupForm() {
+  const [errors, setErrors] = useState<Partial<SignupFormData>>({});
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<SignupFormData>({
@@ -22,6 +23,36 @@ function SignupForm() {
     password: "",
     role: "",
   });
+
+  const validate = () => {
+    const newErrors: Partial<SignupFormData> = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    // if (!formData.role) {
+    //   newErrors.role = "Please select a user type";
+    // }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,9 +65,15 @@ function SignupForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await signUpService(formData);
-    localStorage.setItem("token", response.token);
-    navigate("/login");
+    if (!validate()) return;
+
+    try {
+      const response = await signUpService(formData);
+      localStorage.setItem("token", response.token);
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -63,6 +100,9 @@ function SignupForm() {
             required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
+          {errors.firstName && (
+            <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
+          )}
         </div>
 
         {/* Last Name */}
@@ -76,6 +116,9 @@ function SignupForm() {
             required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
+          {errors.lastName && (
+            <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
+          )}
         </div>
 
         {/* Email */}
@@ -89,6 +132,9 @@ function SignupForm() {
             required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -102,6 +148,9 @@ function SignupForm() {
             required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+          )}
         </div>
 
         {/* Role */}

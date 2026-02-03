@@ -52,10 +52,10 @@ export default function Header() {
                     }}
                   >
                     <LogOut />
-                    <span>Logout</span>
+                    <span className="cursor-pointer">Logout</span>
                   </div>
                 ) : (
-                  <Link to="/login" className="flex">
+                  <Link to="/login" className="flex cursor-pointer">
                     <User />
                     <span>Login</span>
                   </Link>
