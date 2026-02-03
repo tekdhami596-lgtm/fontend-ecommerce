@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { loginService } from "../services/authService";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slice/userSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -17,12 +20,12 @@ const Login = () => {
     e.preventDefault();
     try {
       const user = await loginService(formData);
+      console.log("user:", user);
+      dispatch(login(user));
       localStorage.setItem("token", user.token);
 
       if (user.role === "seller") {
-        navigate("/product");
-      } else {
-        navigate("/product");
+        navigate("/");
       }
     } catch (error) {
       console.error(error);
@@ -30,13 +33,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg flex flex-col gap-6"
+        className="flex w-full max-w-md flex-col gap-6 rounded-xl bg-white p-8 shadow-lg"
       >
-        <h2 className="text-2xl font-bold text-center">Login</h2>
-        <p className="text-center text-gray-500 text-sm">
+        <h2 className="text-center text-2xl font-bold">Login</h2>
+        <p className="text-center text-sm text-gray-500">
           Please login using account detail below.
         </p>
 
@@ -52,7 +55,7 @@ const Login = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
 
@@ -68,23 +71,23 @@ const Login = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
 
-        <p className="text-sm text-right text-gray-500 cursor-pointer hover:underline">
+        <p className="cursor-pointer text-right text-sm text-gray-500 hover:underline">
           Forgot your password?
         </p>
 
         {/* Submit */}
         <button
           type="submit"
-          className="bg-pink-500 text-white py-2 rounded-md font-medium hover:bg-pink-600 transition-colors cursor-pointer"
+          className="cursor-pointer rounded-md bg-pink-500 py-2 font-medium text-white transition-colors hover:bg-pink-600"
         >
-           Login
+          Login
         </button>
 
-        <p className="text-center text-gray-500 text-sm">
+        <p className="text-center text-sm text-gray-500">
           Don’t have an Account?{" "}
           <NavLink to="/signup" className="text-indigo-500 hover:underline">
             Create account

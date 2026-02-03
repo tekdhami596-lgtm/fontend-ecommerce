@@ -7,23 +7,23 @@ import PageNotFound from "../pages/PageNotFound";
 import Signup from "../pages/Signup";
 import SellerDashboard from "../pages/seller/SellerDashboard";
 
-
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      { index: true, element: <Home /> },
+      { path: "/", element: <Home /> },
       { path: "login", element: <Login /> },
-      {path:"signup", element:<Signup/> },
+      { path: "signup", element: <Signup /> },
       {
-        path: "/seller",
+        path: "seller",
         Component: ProtectedRoute,
-        children: [{ path:"dashboard", Component: SellerDashboard }],
+        children: [
+            { path: "dashboard", Component: SellerDashboard },
+        ],
       },
 
-     
-      {path:"*", Component: PageNotFound}
+      { path: "*", Component: PageNotFound },
     ],
   },
 ]);

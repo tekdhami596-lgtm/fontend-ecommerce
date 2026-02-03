@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { login } from "./redux/slice/userSlice";
 
 function App() {
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,13 +21,13 @@ function App() {
       })
       .then((res) => {
         dispatch(login(res.data.data));
-        setIsloading(false);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setIsloading(false);
+        setIsLoading(false);
       });
-  }, []);
+  }, [dispatch]);
   return (
     <>
       {isLoading ? (

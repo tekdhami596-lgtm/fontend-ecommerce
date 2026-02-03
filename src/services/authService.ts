@@ -17,17 +17,14 @@ export const signUpService = async (data: SignupFormData) => {
   }
 };
 
-
 export interface LoginCredentials {
   email: string;
-  password: string; 
+  password: string;
 }
-
 
 export const loginService = async (credentials: LoginCredentials) => {
   try {
     const response = await api.post("/auth/login", credentials);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);

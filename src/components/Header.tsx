@@ -1,22 +1,15 @@
-import { FaRegUser } from "react-icons/fa6";
 import { CiHeart } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
-import { PhoneCall, Mail } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { PhoneCall, Mail, LogOut, User } from "lucide-react";
 import Navbar from "./Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { logout } from "../redux/slice/userSlice";
+import { Link } from "react-router-dom";
 
 export default function Header() {
-  const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
-
-  console.log("logoutuser:", { token });
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-
-    navigate("/");
-  };
+  const user = useSelector((root: RootState) => root.user.value.data);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -47,22 +40,27 @@ export default function Header() {
                 <option>USD</option>
                 <option>EUR</option>
               </select>
-
-              {!token ? (
-                <NavLink
-                  to="/login"
-                  className="flex items-center gap-1 hover:text-pink-300"
-                >
-                  Login <FaRegUser />
-                </NavLink>
-              ) : (
-                <button
-                  onClick={handleLogout}
-                  className="rounded bg-white px-3 py-1 font-semibold text-blue-600 transition duration-200 hover:bg-gray-100"
-                >
-                  Logout
-                </button>
-              )}
+              <div className="flex justify-between gap-2">
+                {user?.firstName && (
+                  <span>{user?.firstName + " " + user?.lastName}</span>
+                )}
+                {user ? (
+                  <div
+                    className="flex gap-1"
+                    onClick={() => {
+                      dispatch(logout());
+                    }}
+                  >
+                    <LogOut />
+                    <span>Logout</span>
+                  </div>
+                ) : (
+                  <Link to="/login" className="flex">
+                    <User />
+                    <span>Login</span>
+                  </Link>
+                )}
+              </div>
 
               <button className="flex items-center gap-1 hover:text-pink-300">
                 Wishlist <CiHeart />
