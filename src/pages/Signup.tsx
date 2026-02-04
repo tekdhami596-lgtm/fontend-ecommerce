@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { signUpService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
-import toast from "../helpers/notify";
+import notify from "../helpers/notify";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slice/userSlice";
+import axios from "axios";
 
 type UserRole = "buyer" | "seller" | "";
 
@@ -15,7 +17,9 @@ interface SignupFormData {
 
 function SignupForm() {
   const [errors, setErrors] = useState<Partial<SignupFormData>>({});
+  const [apiError, setApiError] = useState<ValidationError[]>([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: "",
@@ -24,6 +28,11 @@ function SignupForm() {
     password: "",
     role: "",
   });
+
+  interface ValidationError {
+    field: string;
+    message: string;
+  }
 
   const validate = () => {
     const newErrors: Partial<SignupFormData> = {};
@@ -37,7 +46,7 @@ function SignupForm() {
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
     } else if (formData.lastName.length < 3) {
-      newErrors.lastName = "First name must be at least 3 characters";
+      newErrors.lastName = "Last name must be at least 3 characters"; // fixed typo
     }
 
     if (!formData.email) {
@@ -52,10 +61,6 @@ function SignupForm() {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    // if (!formData.role) {
-    //   newErrors.role = "Please select a user type";
-    // }
-
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -67,28 +72,43 @@ function SignupForm() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear frontend validation error
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
+
+    // Clear backend validation error for this field
+    setApiError((prev) => prev.filter((err) => err.field !== name));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setApiError([]);
 
     if (!validate()) return;
 
-    try {
-      const response = (await signUpService(formData)) as {
-        data: { message: string };
-      };
-      console.log(response.data);
-      if (response.data) {
-        toast.success("Register successfull");
-        navigate("/login");
-      } else {
-        toast.error(response.data);
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
-      console.error("Signup Error:", error);
-    }
+    axios
+      .post("http://localhost:8000/api/auth/signup", formData)
+
+      .then((res) => {
+        dispatch(login(res.data));
+        localStorage.setItem("accessToken", res.data.token);
+        notify.success("Login Successful");
+        // navigate("/");
+      })
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          const backendErrors: ValidationError[] =
+            err.response.data.errors || [];
+          console.log({ backendErrors });
+          setApiError(backendErrors); // store backend validation errors
+          notify.error(err.response.data.message); // optional toast
+        } else {
+          notify.error("Something went wrong");
+        }
+      });
   };
 
   return (
@@ -112,12 +132,13 @@ function SignupForm() {
             placeholder="First Name"
             value={formData.firstName}
             onChange={handleChange}
-            required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
-          {errors.firstName && (
+          {/* frontend validation error */}
+          {errors?.firstName && (
             <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
           )}
+
         </div>
 
         {/* Last Name */}
@@ -128,12 +149,20 @@ function SignupForm() {
             placeholder="Last Name"
             value={formData.lastName}
             onChange={handleChange}
-            required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
-          {errors.lastName && (
+
+          {/* frontend validation error */}
+          {errors?.lastName && (
             <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
           )}
+
+          {/* backend validation error
+          {apiError.map((err) => (
+            <p key={err.field} className="mt-1 text-xs text-red-500">
+              {err.message}
+            </p>
+          ))} */}
         </div>
 
         {/* Email */}
@@ -144,12 +173,20 @@ function SignupForm() {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
-          {errors.email && (
+
+          {/* frontend validation error */}
+          {errors?.email && (
             <p className="mt-1 text-xs text-red-500">{errors.email}</p>
           )}
+
+          {/* backend validation error */}
+          {apiError.map((err) => (
+            <p key={err.field} className="mt-1 text-xs text-red-500">
+              {err.message}
+            </p>
+          ))}
         </div>
 
         {/* Password */}
@@ -160,10 +197,11 @@ function SignupForm() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            required
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
-          {errors.password && (
+
+          {/* frontend validation error */}
+          {errors?.password && (
             <p className="mt-1 text-xs text-red-500">{errors.password}</p>
           )}
         </div>
@@ -179,7 +217,6 @@ function SignupForm() {
               value="buyer"
               checked={formData.role === "buyer"}
               onChange={handleChange}
-              required
             />
             Buyer
           </label>
@@ -204,7 +241,6 @@ function SignupForm() {
           Sign Up
         </button>
 
-        {/* Footer */}
         <p className="mt-4 text-center text-sm text-gray-500">
           Already have an account?{" "}
           <span

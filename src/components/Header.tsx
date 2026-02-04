@@ -1,14 +1,16 @@
 import { CiHeart } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
-import { PhoneCall, Mail, LogOut, User } from "lucide-react";
+import { PhoneCall, Mail, LogOut, User, Moon, Sun } from "lucide-react";
 import Navbar from "./Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { logout } from "../redux/slice/userSlice";
 import { Link } from "react-router-dom";
+import { toggleTheme } from "../redux/slice/themeSlice";
 
 export default function Header() {
   const user = useSelector((root: RootState) => root.user.value.data);
+  const theme = useSelector((root: RootState) => root.theme.mode);
   const dispatch = useDispatch();
 
   return (
@@ -72,6 +74,10 @@ export default function Header() {
                   0
                 </span>
               </div>
+
+              <button onClick={() => dispatch(toggleTheme())}>
+                {theme === "light" ? <Moon /> : <Sun />}
+              </button>
             </div>
           </div>
         </div>

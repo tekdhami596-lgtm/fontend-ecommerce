@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { loginService } from "../services/authService";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slice/userSlice";
+import api from "../api/axios";
 
 // interface LoginResponse {
 //   success: boolean;
@@ -30,7 +30,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await loginService(formData);
+      const response = await api.post("/auth/login", formData);
 
       console.log(response.data);
       dispatch(login(response.data));
