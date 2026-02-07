@@ -5,14 +5,12 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/slice/userSlice";
 import axios from "axios";
 
-type UserRole = "buyer" | "seller" | "";
-
 interface SignupFormData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  role: UserRole;
+  isSeller: boolean;
 }
 
 function SignupForm() {
@@ -26,7 +24,7 @@ function SignupForm() {
     lastName: "",
     email: "",
     password: "",
-    role: "",
+    isSeller: false,
   });
 
   interface ValidationError {
@@ -96,7 +94,7 @@ function SignupForm() {
         dispatch(login(res.data));
         localStorage.setItem("accessToken", res.data.token);
         notify.success("Login Successful");
-        // navigate("/");
+        navigate("/");
       })
       .catch((err) => {
         if (err.response && err.response.data) {
@@ -138,7 +136,6 @@ function SignupForm() {
           {errors?.firstName && (
             <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
           )}
-
         </div>
 
         {/* Last Name */}
@@ -156,13 +153,6 @@ function SignupForm() {
           {errors?.lastName && (
             <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
           )}
-
-          {/* backend validation error
-          {apiError.map((err) => (
-            <p key={err.field} className="mt-1 text-xs text-red-500">
-              {err.message}
-            </p>
-          ))} */}
         </div>
 
         {/* Email */}
@@ -207,30 +197,14 @@ function SignupForm() {
         </div>
 
         {/* Role */}
-        <div className="mb-6 text-sm text-gray-600">
-          <p className="mb-2 font-medium">User Type</p>
-
-          <label className="mr-4 inline-flex items-center gap-2">
-            <input
-              type="radio"
-              name="role"
-              value="buyer"
-              checked={formData.role === "buyer"}
-              onChange={handleChange}
-            />
-            Buyer
-          </label>
-
-          <label className="inline-flex items-center gap-2">
-            <input
-              type="radio"
-              name="role"
-              value="seller"
-              checked={formData.role === "seller"}
-              onChange={handleChange}
-            />
-            Seller
-          </label>
+        <div>
+          <label htmlFor="isSeller">Signup as both Buyer and Seller</label>
+          <input
+            id="isSeller"
+            type="checkbox"
+            name="isSeller"
+            className="h-5 w-5 rounded border border-slate-200 bg-white px-4 text-sm text-slate-900 transition outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
+          />
         </div>
 
         {/* Button */}
