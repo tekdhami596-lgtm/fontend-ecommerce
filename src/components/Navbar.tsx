@@ -21,9 +21,20 @@ export default function Navbar() {
             <NavLink to="/" className="text-pink-500">
               Home
             </NavLink>
-           
-             <NavLink to="/seller/dashboard" className="hover:text-pink-500">
+
+            <NavLink to="/seller/dashboard" className="hover:text-pink-500">
               Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/seller/products/create"
+              className="hover:text-pink-500"
+            >
+              Create Product
+            </NavLink>
+
+            <NavLink to="/seller/products" className="hover:text-pink-500">
+              Seller Product
             </NavLink>
           </div>
 
