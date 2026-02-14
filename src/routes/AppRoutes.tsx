@@ -9,6 +9,7 @@ import SellerDashboard from "../pages/seller/SellerDashboard";
 import Products from "../pages/Products";
 import SellerProduct from "../pages/seller/SellerProduct";
 import CreateSellerProduct from "../pages/seller/CreateSellerProduct";
+import EditSellerProduct from "../pages/seller/EditSellerProduct";
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +26,8 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", Component: SellerDashboard },
           { path: "products", Component: SellerProduct },
-          {path:"products/create", Component:CreateSellerProduct}
+          { path: "products/create", Component: CreateSellerProduct },
+          { path: "products/edit/:id", Component: EditSellerProduct },
         ],
       },
 
