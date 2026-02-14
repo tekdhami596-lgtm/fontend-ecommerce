@@ -92,7 +92,7 @@ function SignupForm() {
 
       .then((res) => {
         dispatch(login(res.data));
-        localStorage.setItem("accessToken", res.data.token);
+        localStorage.setItem("token", res.data.token);
         notify.success("Login Successful");
         navigate("/");
       })
