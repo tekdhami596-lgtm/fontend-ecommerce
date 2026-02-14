@@ -178,14 +178,14 @@ function SellerProduct() {
                       onClick={() =>
                         navigate(`/seller/products/edit/${product.id}`)
                       }
-                      className="flex-1 rounded-lg bg-blue-500 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
+                      className="flex-1 cursor-pointer rounded-lg bg-blue-500 py-2 text-sm font-medium text-white transition hover:bg-blue-600"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="flex-1 rounded-lg bg-red-500 py-2 text-sm font-medium text-white transition hover:bg-red-600"
+                      className="flex-1 cursor-pointer rounded-lg bg-red-500 py-2 text-sm font-medium text-white transition hover:bg-red-600"
                     >
                       Delete
                     </button>

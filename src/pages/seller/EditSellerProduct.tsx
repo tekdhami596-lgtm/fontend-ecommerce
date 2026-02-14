@@ -27,41 +27,52 @@ function EditSellerProduct() {
   // 🔹 Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await axios.get(
-        `http://localhost:8000/api/seller/products/${id}`,
-      );
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/seller/products/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
 
-      const product = res.data.data;
+        const product = res.data.data;
+        console.log({ product });
 
-      setForm({
-        title: product.title,
-        price: product.price,
-        stock: product.stock,
-        shortDescription: product.shortDescription,
-        description: product.description,
-      });
+        setForm({
+          title: product.title,
+          price: product.price.toString(),
+          stock: product.stock.toString(),
+          shortDescription: product.shortDescription,
+          description: product.description,
+        });
 
-      setExistingImages(product.images);
-      setLoading(false);
+        setExistingImages(product.images);
+        setLoading(false);
+      } catch (err) {
+        console.error("Failed to fetch product:", err);
+      }
     };
 
     fetchProduct();
   }, [id]);
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleNewImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-
     const files = Array.from(e.target.files);
     setNewImages((prev) => [...prev, ...files]);
   };
 
   const removeOldImage = (imageId: number) => {
-    setDeletedImages([...deletedImages, imageId]);
-    setExistingImages(existingImages.filter((img) => img.id !== imageId));
+    setDeletedImages((prev) => [...prev, imageId]);
+    setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
   };
 
   const removeNewImage = (index: number) => {
@@ -70,27 +81,40 @@ function EditSellerProduct() {
     setNewImages(updated);
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Handle suvmit");
 
     const formData = new FormData();
 
+    // Append text fields
     Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(key, value as string);
     });
 
-    formData.append("deleteImageIds", JSON.stringify(deletedImages));
+    // Append deleted image IDs
+    formData.append("deletedImageIds", JSON.stringify(deletedImages));
 
+    // Append new images
     newImages.forEach((file) => {
-      formData.append("images", file);
+      formData.append("images", file); // MUST match backend Multer field
     });
 
-    await axios.put(
-      `http://localhost:8000/api/seller/products/${id}`,
-      formData,
-    );
+    try {
+      await axios.patch(
+        `http://localhost:8000/api/seller/products/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
 
-    navigate("/seller/products");
+      navigate("/seller/products/");
+    } catch (err) {
+      console.error("Update failed:", err);
+    }
   };
 
   if (loading) return <p className="mt-10 text-center">Loading...</p>;
@@ -201,7 +225,7 @@ function EditSellerProduct() {
                 <button
                   type="button"
                   onClick={() => removeNewImage(index)}
-                  className="absolute top-1 right-1 rounded bg-red-500 px-2 py-1 text-xs text-white"
+                  className="absolute top-1 right-1 rounded bg-red-500 px-2 py-1 text-xs text-white cursor-pointer"
                 >
                   ✕
                 </button>
@@ -213,7 +237,7 @@ function EditSellerProduct() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full rounded-xl bg-purple-600 py-3 font-semibold text-white transition hover:bg-purple-700"
+          className="w-full rounded-xl bg-purple-600 py-3 font-semibold text-white transition hover:bg-purple-700 cursor-pointer"
         >
           Update Product
         </button>
