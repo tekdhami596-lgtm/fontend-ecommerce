@@ -10,6 +10,7 @@ import Products from "../pages/Products";
 import SellerProduct from "../pages/seller/SellerProduct";
 import CreateSellerProduct from "../pages/seller/CreateSellerProduct";
 import EditSellerProduct from "../pages/seller/EditSellerProduct";
+import Cart from "../pages/Cart";
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,14 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "products", element: <Products /> },
+      { path: "/products", children: [{ path: "", Component: Products }] },
+      {
+        Component: ProtectedRoute,
+        children: [
+          { path: "/cart", Component: Cart },
+          // { path: "/checkout", Component: Checkout },
+        ],
+      },
       {
         path: "seller",
         Component: ProtectedRoute,
