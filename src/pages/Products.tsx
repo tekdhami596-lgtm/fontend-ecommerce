@@ -43,21 +43,25 @@ function Products() {
   const handleAddToCart = async (product:Product) => {
     try {
       // Call your API to add the product
-      cartApi.create({ productId:product.id });
-      notify.success("Item added to cart successfully");
-
-      const cartItem = {
-        id: product.id, // you can use product.id or generate unique id
-        productId: product.id,
-        title: product.title,
-        stock: product.stock,
-        quantity: 1, // default quantity
-      };
-
-      // Update Redux cart state
-      dispatch(addToCartRedux(cartItem));
+    const res = await  cartApi.create({ productId:product.id });
+    const cartData = res.data.data
+    const cartItem = {
+      id: cartData.id, // ✅ use cart id from backend (NOT product.id)
+      productId: product.id,
+      title: product.title,
+      price: product.price,
+      stock: product.stock,
+      quantity: cartData.quantity ?? 1,
+      
+      image: product.images?.[0]?.path || "", // ✅ REQUIRED FIELD
+    };
+    
+    // Update Redux cart state
+    dispatch(addToCartRedux(cartItem));
+    notify.success("Item added to cart successfully");
     } catch (err) {
       console.error("Failed to add to cart", err);
+      notify.error("Failed to add to cart")
     }
   };
 
