@@ -1,95 +1,104 @@
-import  { useEffect, useState } from "react";
-import cartApi from "../api/cart.api"
-
-interface CartItem {
-  id: number;
-  quantity: number;
-  product: {
-    title: string;
-    price: number;
-    stock: number;
-  };
-}
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setCart, updateCart, removeFromCart } from "../redux/slice/cartSlice";
+import notify from "../helpers/notify";
+import cartApi from "../api/cart.api";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const fetchCartIems = () => {
-    cartApi
-      .get()
-      .then((res) => {
-        setCartItems(res.data.data);
-      })
-      .catch((err) => {});
-  };
-
+  // Load cart on mount
   useEffect(() => {
-    fetchCartIems();
-  }, []);
+    const fetchCart = async () => {
+      try {
+        const res = await cartApi.get();
+        const items = res.data.data.map((c: any) => ({
+          id: c.id,
+          productId: c.product.id,
+          title: c.product.title,
+          stock: c.product.stock,
+          quantity: c.quantity,
+        }));
+        dispatch(setCart(items));
+      } catch (err) {
+        console.error("Failed to fetch cart", err);
+        notify.error("Failed to load cart");
+      }
+    };
+    fetchCart();
+  }, [dispatch]);
 
-  const updateCartItemCount = (id: number, quantity: number) => {
-    console.log(id);
-    console.log(quantity);
-    cartApi.update(id, quantity).then((res) => {
-      fetchCartIems();
-    });
+  // Handle quantity change
+  const handleQuantityChange = async (cartItem: any, quantity: number) => {
+    if (quantity < 1 || quantity > cartItem.stock) return;
+
+    try {
+      // Update backend
+      await cartApi.update(cartItem.id, quantity);
+
+      // Update Redux
+      dispatch(updateCart({ id: cartItem.id, quantity }));
+    } catch (err) {
+      console.error("Failed to update quantity", err);
+      notify.error("Failed to update quantity");
+    }
   };
 
-  const deleteCartIem = (id: number) => {
-      cartApi.delete(id).then((res) => {
-      fetchCartIems();
-    });
+  // Handle delete
+  const handleDelete = async (cartItem: any) => {
+    try {
+      await cartApi.delete(cartItem.id);
+      dispatch(removeFromCart(cartItem.id));
+      notify.success("Item removed from cart");
+    } catch (err) {
+      console.error("Failed to delete item", err);
+      notify.error("Failed to remove item");
+    }
   };
 
   return (
-    <div className="container">
-      <div>user speicific cart item..</div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <ul className="flex flex-col gap-5">
-        {cartItems.map((el) => {
-          return (
-            <li className="flex gap-4 border border-gray-200 p-4 shadow">
-              <div className="flex grow justify-between">
-                <div>
-                  <p> titel: {el.product.title}</p>
-                  <p>stock: {el.product.stock}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      updateCartItemCount(el.id, --el.quantity);
-                    }}
-                    className="border p-3"
-                  >
-                    -
-                  </button>
-                  <span>{el.quantity}</span>
-                  <button
-                    onClick={() => {
-                      updateCartItemCount(el.id, ++el.quantity);
-                    }}
-                    className="border p-3"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  deleteCartIem(el.id);
-                }}
-              >
-                delete
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+    <div className="mx-auto max-w-4xl space-y-4 p-4">
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        cartItems.map((item) => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between rounded border p-2"
+          >
+            <div>
+              <p className="font-semibold">{item.title}</p>
+              <p className="text-sm text-gray-500">Stock: {item.stock}</p>
+            </div>
 
-      <button>Proceed to checkout </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                className="border px-2"
+              >
+                -
+              </button>
+              <span>{item.quantity}</span>
+              <button
+                onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                className="border px-2"
+                disabled={item.quantity >= item.stock}
+              >
+                +
+              </button>
+              <button
+                onClick={() => handleDelete(item)}
+                className="font-semibold text-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 }

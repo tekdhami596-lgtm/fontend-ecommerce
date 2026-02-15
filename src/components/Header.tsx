@@ -11,6 +11,8 @@ import { toggleTheme } from "../redux/slice/themeSlice";
 export default function Header() {
   const user = useSelector((root: RootState) => root.user.value.data);
   const theme = useSelector((root: RootState) => root.theme.mode);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const dispatch = useDispatch();
 
   return (
@@ -68,13 +70,15 @@ export default function Header() {
                 Wishlist <CiHeart />
               </button>
 
-              <div className="relative cursor-pointer hover:text-pink-300">
-               <Link to={"/cart"}>
-                <IoCartOutline size={20} />
-                <span className="absolute -top-2 -right-2 rounded-full bg-pink-500 px-1 text-xs">
-                  0
-                </span>
-               </Link>
+              <div className="mx-auto flex max-w-7xl items-center justify-end gap-4">
+                <Link to="/cart" className="relative">
+                  <IoCartOutline size={24} />
+                  {totalQuantity > 0 && (
+                    <span className="absolute -top-2 -right-2 rounded-full bg-pink-500 px-1 text-xs">
+                      {totalQuantity}
+                    </span>
+                  )}
+                </Link>
               </div>
 
               <button onClick={() => dispatch(toggleTheme())}>

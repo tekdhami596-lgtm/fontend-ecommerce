@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NoImageFound from "../assets/NoImage.png";
-import cartApi from "../api/cart.api";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
+import cartApi from "../api/cart.api";
+import notify from "../helpers/notify";
 
 type ProductImage = {
   path: string;
@@ -20,6 +23,7 @@ type Product = {
 function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchProducts();
@@ -30,11 +34,30 @@ function Products() {
       const res = await axios.get(
         "http://localhost:8000/api/products/?limit=100",
       );
-
       setProducts(res.data.data);
-      console.log(res.data.data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleAddToCart = async (product:Product) => {
+    try {
+      // Call your API to add the product
+      cartApi.create({ productId:product.id });
+      notify.success("Item added to cart successfully");
+
+      const cartItem = {
+        id: product.id, // you can use product.id or generate unique id
+        productId: product.id,
+        title: product.title,
+        stock: product.stock,
+        quantity: 1, // default quantity
+      };
+
+      // Update Redux cart state
+      dispatch(addToCartRedux(cartItem));
+    } catch (err) {
+      console.error("Failed to add to cart", err);
     }
   };
 
@@ -67,11 +90,9 @@ function Products() {
             <h2 className="truncate text-lg font-semibold text-gray-800">
               {product.title}
             </h2>
-
             <p className="line-clamp-2 text-sm text-gray-500">
               {product.shortDescription}
             </p>
-
             <div className="flex items-center justify-between pt-2">
               <span className="text-lg font-bold text-indigo-600">
                 ${product.price}
@@ -87,16 +108,23 @@ function Products() {
                   : "Out of Stock"}
               </span>
             </div>
+            {/* Add to cart button */}
             <button
+              disabled={product.stock === 0}
               onClick={(e) => {
                 e.stopPropagation();
-                e.preventDefault();
-                cartApi.create({ productId: product.id });
+                handleAddToCart(product);
               }}
+              className={`mt-2 w-full cursor-pointer rounded bg-indigo-600 px-3 py-1 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-gray-400`}
             >
-              Add to cart
+              {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
-            <button>View Product Details</button>
+            <button
+              onClick={() => navigate(`/products/${product.id}`)}
+              className="mt-1 w-full cursor-pointer rounded border border-indigo-600 px-3 py-1 text-indigo-600 hover:bg-indigo-50"
+            >
+              View Product Details
+            </button>
           </div>
         </div>
       ))}
