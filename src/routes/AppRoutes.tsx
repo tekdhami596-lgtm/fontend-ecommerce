@@ -17,16 +17,16 @@ import ProductDetailPage from "../pages/ProductDetail";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    Component: MainLayout,
     children: [
-      { path: "/", element: <Home /> },
-      { path: "login", element: <Login /> },
-      { path: "signup", element: <Signup /> },
+      { path: "/", Component: Home },
+      { path: "login", Component: Login },
+      { path: "signup", Component: Signup },
       {
         path: "/products",
         children: [
           { path: "", Component: Products },
-          { path: ":id", Component:ProductDetailPage },
+          { path: ":id", Component: ProductDetailPage },
         ],
       },
       {
