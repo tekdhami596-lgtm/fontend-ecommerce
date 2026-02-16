@@ -154,6 +154,7 @@ export default function Cart() {
         </div>
 
         <button
+        onClick={()=>navigate("/checkout")}
           disabled={cartItems.length === 0}
           className="w-full cursor-pointer rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:bg-gray-400"
         >

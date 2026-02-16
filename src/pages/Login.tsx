@@ -1,23 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slice/userSlice";
 import api from "../api/axios";
 
-// interface LoginResponse {
-//   success: boolean;
-//   data?: {
-//     id: string;
-//     email: string;
-//     role: "buyer" | "seller";
-//   };
-//   token?: string | undefined;
-//   message?: string | undefined;
-// }
-
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -32,13 +23,12 @@ const Login = () => {
     try {
       const response = await api.post("/auth/login", formData);
 
-      console.log(response.data);
       dispatch(login(response.data));
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
       }
-      navigate("/");
+      navigate(from, { replace: true });
 
       // role based navigation
     } catch (err) {

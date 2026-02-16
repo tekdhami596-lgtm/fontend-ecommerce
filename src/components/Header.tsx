@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { toggleTheme } from "../redux/slice/themeSlice";
 
 export default function Header() {
-  const user = useSelector((root: RootState) => root.user.value.data);
+  const user = useSelector((root: RootState) => root.user.data);
   const theme = useSelector((root: RootState) => root.theme.mode);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);

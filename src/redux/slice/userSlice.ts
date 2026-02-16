@@ -1,42 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define a type for the slice state
-interface UserState {
-  value: {
-    data: null | {
-      firstName: string;
-      lastName: string;
-      email: string;
-      role: string;
-    };
-  };
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  address?: string;
+  phone?: string;
 }
 
-// Define the initial state using that type
+interface UserState {
+  data: User | null;
+}
+
 const initialState: UserState = {
-  value: {
-    data: null 
-  },
+  data: null,
 };
 
 export const userSlice = createSlice({
   name: "user",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    login:(state, action)=>{
-      state.value.data = action.payload
+    login: (state, action: PayloadAction<User>) => {
+      state.data = action.payload;
     },
-    logout:(state)=>{
-      state.value.data = null
-      localStorage.removeItem("token")
-    }
-   
+
+    logout: (state) => {
+      state.data = null;
+      localStorage.removeItem("token");
     },
+
+    // ⭐ optional → update profile later
+    updateProfile: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.data) {
+        state.data = { ...state.data, ...action.payload };
+      }
+    },
+  },
 });
 
-export const { login, logout } = userSlice.actions;
-
-
-
+export const { login, logout, updateProfile } = userSlice.actions;
 export default userSlice.reducer;

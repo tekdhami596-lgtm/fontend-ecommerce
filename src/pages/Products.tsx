@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NoImageFound from "../assets/NoImage.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
 import cartApi from "../api/cart.api";
 import notify from "../helpers/notify";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 type ProductImage = {
   path: string;
@@ -24,6 +26,9 @@ function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const user = useSelector((state: RootState) => state.user.data);
 
   useEffect(() => {
     fetchProducts();
@@ -40,28 +45,36 @@ function Products() {
     }
   };
 
-  const handleAddToCart = async (product:Product) => {
+  const handleAddToCart = async (product: Product) => {
+    if (!user) {
+      notify.error("Please login first");
+
+      navigate("/login", {
+        state: { from: location.pathname },
+      });
+      return;
+    }
     try {
       // Call your API to add the product
-    const res = await  cartApi.create({ productId:product.id });
-    const cartData = res.data.data
-    const cartItem = {
-      id: cartData.id, // ✅ use cart id from backend (NOT product.id)
-      productId: product.id,
-      title: product.title,
-      price: product.price,
-      stock: product.stock,
-      quantity: cartData.quantity ?? 1,
-      
-      image: product.images?.[0]?.path || "", // ✅ REQUIRED FIELD
-    };
-    
-    // Update Redux cart state
-    dispatch(addToCartRedux(cartItem));
-    notify.success("Item added to cart successfully");
+      const res = await cartApi.create({ productId: product.id });
+      const cartData = res.data.data;
+      const cartItem = {
+        id: cartData.id, // ✅ use cart id from backend (NOT product.id)
+        productId: product.id,
+        title: product.title,
+        price: product.price,
+        stock: product.stock,
+        quantity: cartData.quantity ?? 1,
+
+        image: product.images?.[0]?.path || "", // ✅ REQUIRED FIELD
+      };
+
+      // Update Redux cart state
+      dispatch(addToCartRedux(cartItem));
+      notify.success("Item added to cart successfully");
     } catch (err) {
       console.error("Failed to add to cart", err);
-      notify.error("Failed to add to cart")
+      notify.error("Failed to add to cart");
     }
   };
 
