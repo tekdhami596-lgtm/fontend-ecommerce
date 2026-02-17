@@ -6,6 +6,7 @@ import cartApi from "../api/cart.api";
 import orderApi, { OrderPayload } from "../api/order.api";
 import notify from "../helpers/notify";
 import NoImage from "../assets/NoImage.png";
+import { useNavigate } from "react-router-dom";
 
 interface CartItem {
   id: number;
@@ -22,6 +23,7 @@ interface CartItem {
 export default function Checkout() {
   const dispatch = useDispatch();
   const userProfile = useSelector((state: RootState) => state.user.data);
+  const navigate = useNavigate();
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -83,19 +85,33 @@ export default function Checkout() {
       }));
 
       const payload: OrderPayload = {
-        userId: userProfile.id, // guaranteed number
+        userId: userProfile.id,
         userInfo,
         paymentMode,
         orderItems,
       };
-      console.log("Tek");
+
       const res = await orderApi.create(payload);
-      console.log("Order created:", res.data.data);
+      console.log("Order created:", res.data);
+      const response = res.data.data;
+
       notify.success("Order created successfully");
       dispatch(clearCart());
 
+      if (paymentMode === "cash") {
+        navigate(`/order-success/${response.id}`, {
+          state: {
+            orderId: response.id,
+            BuyerName: response.buyerName,
+            Address: userInfo.address,
+            reference: response.reference,
+            total: totalAmount,
+          },
+        });
+      }
+
       // eSewa payment
-      if (paymentMode === "esewa") {
+      else if (paymentMode === "esewa") {
         const esewa = res.data.esewa;
         const form = document.createElement("form");
         form.method = "POST";

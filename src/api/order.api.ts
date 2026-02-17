@@ -8,9 +8,13 @@ export interface OrderPayload {
 }
 
 const orderApi = {
-  get: () => {
-    return api.get("/orders");
+  getAll: () => {
+    return api.get("/orders/my-orders");
   },
+  getById: (id: number) => {
+    api.get(`/orders/${id}`);
+  },
+
   create: (payload: OrderPayload) => {
     console.log({ payload });
     return api.post("/orders", payload);

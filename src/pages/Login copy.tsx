@@ -9,39 +9,30 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
-
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
     try {
-      // response shape: { token, user: { id, role, firstName, ... } }
-      const { data } = await api.post("/auth/login", formData);
+      const response = await api.post("/auth/login", formData);
 
-      dispatch(login(data.user));
-      localStorage.setItem("token", data.token);
+      dispatch(login(response.data));
 
-      // Role-based redirect
-      if (data.user.role === "seller") {
-        navigate("/seller/dashboard", { replace: true });
-      } else if (data.user.role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate(from !== "/login" ? from : "/", { replace: true });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Invalid email or password.");
-    } finally {
-      setLoading(false);
+      navigate(from, { replace: true });
+
+      // role based navigation
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -56,12 +47,7 @@ const Login = () => {
           Please login using account detail below.
         </p>
 
-        {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
-
+        {/* Email */}
         <div className="flex flex-col">
           <label htmlFor="email" className="mb-2 text-gray-600">
             Email Address
@@ -73,11 +59,11 @@ const Login = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="you@example.com"
             className="rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
 
+        {/* Password */}
         <div className="flex flex-col">
           <label htmlFor="password" className="mb-2 text-gray-600">
             Password
@@ -89,7 +75,6 @@ const Login = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Enter your password"
             className="rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
@@ -98,16 +83,16 @@ const Login = () => {
           Forgot your password?
         </p>
 
+        {/* Submit */}
         <button
           type="submit"
-          disabled={loading}
-          className="cursor-pointer rounded-md bg-pink-500 py-2 font-medium text-white transition-colors hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="cursor-pointer rounded-md bg-pink-500 py-2 font-medium text-white transition-colors hover:bg-pink-600"
         >
-          {loading ? "Logging in..." : "Login"}
+          Login
         </button>
 
         <p className="text-center text-sm text-gray-500">
-          Don't have an Account?{" "}
+          Don’t have an Account?{" "}
           <NavLink to="/signup" className="text-indigo-500 hover:underline">
             Create account
           </NavLink>
