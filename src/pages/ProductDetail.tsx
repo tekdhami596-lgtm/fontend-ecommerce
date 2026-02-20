@@ -15,7 +15,12 @@ type Seller = {
   firstName: string;
   lastName: string;
   email: string;
-  storeName?: string; // ✅ available now since we added it to UserModel
+  storeName?: string;
+};
+
+type Category = {
+  id: number;
+  title: string;
 };
 
 type Product = {
@@ -27,6 +32,7 @@ type Product = {
   description: string;
   images: ProductImage[];
   seller: Seller;
+  categories: Category[];
 };
 
 const ProductDetailPage: React.FC = () => {
@@ -37,7 +43,6 @@ const ProductDetailPage: React.FC = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.user.data);
-  // ✅ FIX 1: check role — sellers cannot add to cart
   const isSeller = user?.role === "seller";
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -69,7 +74,6 @@ const ProductDetailPage: React.FC = () => {
       navigate("/login", { state: { from: location.pathname } });
       return;
     }
-    // ✅ FIX 1: block sellers
     if (isSeller) {
       notify.error("Sellers cannot add items to cart");
       return;
@@ -85,8 +89,6 @@ const ProductDetailPage: React.FC = () => {
           price: product.price,
           stock: product.stock,
           quantity: cartData.quantity ?? 1,
-          // ✅ FIX 2: was cartData.images?.[0].path — cartData is a cart row,
-          //           it has NO images. Use product.images which is already in state.
           image: product.images?.[0]?.path || "",
         }),
       );
@@ -100,7 +102,6 @@ const ProductDetailPage: React.FC = () => {
   if (loading) return <p className="mt-20 text-center">Loading...</p>;
   if (!product) return <p className="mt-20 text-center">Product not found</p>;
 
-  // ✅ FIX 3: was hardcoded http://localhost:8000 everywhere — use env var
   const imgUrl = (path: string) =>
     path.startsWith("http") ? path : `${import.meta.env.VITE_API_URL}/${path}`;
 
@@ -132,13 +133,27 @@ const ProductDetailPage: React.FC = () => {
         {/* Right: Info */}
         <div className="flex flex-col justify-between md:w-1/2">
           <div>
+            {/* Categories */}
+            {product.categories?.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {product.categories.map((cat) => (
+                  <span
+                    key={cat.id}
+                    className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600"
+                  >
+                    Category: {cat.title}
+                  </span>
+                ))}
+              </div>
+            )}
+
             <h1 className="text-3xl font-bold">{product.title}</h1>
             <p className="mt-2 text-xl text-green-600">₹{product.price}</p>
             <p className="mt-2 text-gray-600">Stock: {product.stock}</p>
             <p className="mt-4">{product.shortDescription}</p>
             <p className="mt-4">{product.description}</p>
 
-            {/* Seller Info — storeName shown if available */}
+            {/* Seller Info */}
             <div className="mt-6 rounded border bg-gray-50 p-4">
               <h2 className="text-xl font-semibold">Seller Details</h2>
               {product.seller.storeName && (
@@ -153,7 +168,6 @@ const ProductDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* ✅ FIX 1: hide cart buttons for sellers, show message instead */}
           {!isSeller ? (
             <div className="mt-6 flex gap-4">
               <button

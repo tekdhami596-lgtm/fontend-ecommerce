@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CategoryCheckboxes from "../../components/CategoryCheckboxes";
+import notify from "../../helpers/notify";
 
 interface ImageType {
   id: number;
@@ -113,7 +114,7 @@ function EditSellerProduct() {
     });
 
     try {
-      await axios.patch(
+      const res = await axios.patch(
         `http://localhost:8001/api/seller/products/${id}`,
         formData,
         {
@@ -122,9 +123,11 @@ function EditSellerProduct() {
           },
         },
       );
+      notify.success(res.data.message);
       navigate("/seller/products/");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Update failed:", err);
+      notify.error(err.response?.data?.message || "Failed to update product");
     }
   };
 

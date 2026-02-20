@@ -141,14 +141,14 @@ function SellerDashboard() {
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/seller/products/create")}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+              className="flex cursor-pointer items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
             >
               <Plus size={16} />
               New Product
             </button>
             <button
               onClick={() => navigate("/seller/products")}
-              className="flex items-center gap-2 rounded-lg border border-indigo-600 px-4 py-2 font-medium text-indigo-600 hover:bg-indigo-50"
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-indigo-600 px-4 py-2 font-medium text-indigo-600 hover:bg-indigo-50"
             >
               <List size={16} />
               My Products

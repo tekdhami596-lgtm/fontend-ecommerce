@@ -197,7 +197,7 @@ export default function Navbar({ role }: NavbarProps) {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setCategoryOpen(!categoryOpen)}
-              className="flex items-center gap-1 font-medium text-gray-700 transition-colors hover:text-pink-500"
+              className="flex cursor-pointer items-center gap-1 font-medium text-gray-700 transition-colors hover:text-pink-500"
             >
               Products
               <ChevronDown
