@@ -2,7 +2,6 @@ import axios from "axios";
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import notify from "../../helpers/notify";
 import { useNavigate } from "react-router-dom";
-import CategoryCheckboxes from "../../components/CategoryCheckboxes";
 
 type ProductForm = {
   title: string;
@@ -24,31 +23,41 @@ function CreateSellerProduct() {
     images: [],
   });
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
     title?: string;
     price?: string;
     stock?: string;
-    categories?: string;
   }>({});
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    setForm((prev) => ({ ...prev, images: Array.from(files) }));
+
+    setForm((prev) => ({
+      ...prev,
+      images: Array.from(files),
+    }));
   };
 
   const validate = () => {
-    const newErrors: typeof errors = {};
+    const newErrors: { title?: string; price?: string; stock?: string } = {};
 
     if (!form.title.trim()) {
       newErrors.title = "Title is required";
@@ -68,20 +77,19 @@ function CreateSellerProduct() {
       newErrors.stock = "Stock cannot be negative";
     }
 
-    if (selectedCategoryIds.length === 0) {
-      newErrors.categories = "Please select at least one category";
-    }
-
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     if (!validate()) return;
 
     try {
       setLoading(true);
+
       const token = localStorage.getItem("token");
       const formData = new FormData();
 
@@ -91,17 +99,14 @@ function CreateSellerProduct() {
       formData.append("shortDescription", form.shortDescription);
       formData.append("description", form.description);
 
-      // Send selected category IDs
-      selectedCategoryIds.forEach((id) => {
-        formData.append("categoryIds[]", String(id));
-      });
-
       form.images.forEach((file) => {
         formData.append("images[]", file);
       });
 
       await axios.post("http://localhost:8001/api/seller/products", formData, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setForm({
@@ -112,12 +117,11 @@ function CreateSellerProduct() {
         description: "",
         images: [],
       });
-      setSelectedCategoryIds([]);
       notify.success("Product created successfully");
       navigate("/seller/products");
     } catch (error) {
       console.error(error);
-      notify.error("Error creating product");
+      alert("Error creating product");
     } finally {
       setLoading(false);
     }
@@ -141,6 +145,7 @@ function CreateSellerProduct() {
               name="title"
               value={form.title}
               onChange={handleChange}
+              required
               className="w-full rounded-lg border border-gray-300 px-4 py-2 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
             {errors.title && (
@@ -148,11 +153,11 @@ function CreateSellerProduct() {
             )}
           </div>
 
-          {/* Price & Stock */}
+          {/* Price & Stock Grid */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Price *
+                Price
               </label>
               <input
                 type="number"
@@ -169,7 +174,7 @@ function CreateSellerProduct() {
 
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Stock *
+                Stock
               </label>
               <input
                 type="number"
@@ -182,26 +187,6 @@ function CreateSellerProduct() {
                 <p className="mt-1 text-sm text-red-500">{errors.stock}</p>
               )}
             </div>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Categories * — select all that apply
-            </label>
-            <CategoryCheckboxes
-              selectedIds={selectedCategoryIds}
-              onChange={setSelectedCategoryIds}
-            />
-            {selectedCategoryIds.length > 0 && (
-              <p className="mt-1 text-xs text-green-600">
-                {selectedCategoryIds.length} categor
-                {selectedCategoryIds.length === 1 ? "y" : "ies"} selected
-              </p>
-            )}
-            {errors.categories && (
-              <p className="mt-1 text-sm text-red-500">{errors.categories}</p>
-            )}
           </div>
 
           {/* Short Description */}
@@ -241,11 +226,11 @@ function CreateSellerProduct() {
               type="file"
               multiple
               onChange={handleImageChange}
-              className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"

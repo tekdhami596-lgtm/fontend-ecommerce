@@ -15,6 +15,12 @@ import SellerDashboard from "../pages/seller/SellerDashboard";
 import SellerProduct from "../pages/seller/SellerProduct";
 import CreateSellerProduct from "../pages/seller/CreateSellerProduct";
 import EditSellerProduct from "../pages/seller/EditSellerProduct";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminUsers from "../pages/admin/Adminusers";
+import AdminSellers from "../pages/admin/AdminSellers";
+import AdminProducts from "../pages/admin/AdminProducts";
+import AdminOrders from "../pages/admin/AdminOrders";
+import ManageCategories from "../components/ManageCategories";
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +59,23 @@ export const router = createBrowserRouter([
           { path: "products", Component: SellerProduct },
           { path: "products/create", Component: CreateSellerProduct },
           { path: "products/edit/:id", Component: EditSellerProduct },
+        ],
+      },
+
+      // ── Admin only ──────────────────────────────────────────
+      {
+        path: "admin",
+        element: <ProtectedRoute allowedRoles={["admin"]} />,
+        children: [
+          { path: "dashboard", Component: AdminDashboard },
+          { path: "users", Component: AdminUsers },
+          { path: "sellers", Component: AdminSellers },
+          { path: "products", Component: AdminProducts },
+          { path: "orders", Component: AdminOrders },
+          {
+            path: "categories",
+            element: <ManageCategories viewMode="admin" />,
+          },
         ],
       },
 

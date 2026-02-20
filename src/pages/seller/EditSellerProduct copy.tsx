@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import CategoryCheckboxes from "../../components/CategoryCheckboxes";
 
 interface ImageType {
   id: number;
@@ -21,12 +20,11 @@ function EditSellerProduct() {
     description: "",
   });
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [existingImages, setExistingImages] = useState<ImageType[]>([]);
   const [deletedImages, setDeletedImages] = useState<number[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
 
-  // Fetch product + its existing categories
+  // 🔹 Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -40,6 +38,7 @@ function EditSellerProduct() {
         );
 
         const product = res.data.data;
+        console.log({ product });
 
         setForm({
           title: product.title,
@@ -49,13 +48,7 @@ function EditSellerProduct() {
           description: product.description,
         });
 
-        setExistingImages(product.images || []);
-
-        // Pre-select existing category IDs
-        if (product.categories && product.categories.length > 0) {
-          setSelectedCategoryIds(product.categories.map((c: any) => c.id));
-        }
-
+        setExistingImages(product.images);
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -73,7 +66,8 @@ function EditSellerProduct() {
 
   const handleNewImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setNewImages((prev) => [...prev, ...Array.from(e.target.files!)]);
+    const files = Array.from(e.target.files);
+    setNewImages((prev) => [...prev, ...files]);
   };
 
   const removeOldImage = (imageId: number) => {
@@ -89,27 +83,21 @@ function EditSellerProduct() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (selectedCategoryIds.length === 0) {
-      alert("Please select at least one category");
-      return;
-    }
+    console.log("Handle suvmit");
 
     const formData = new FormData();
 
+    // Append text fields
     Object.entries(form).forEach(([key, value]) => {
       formData.append(key, value as string);
     });
 
-    // Send updated category IDs
-    selectedCategoryIds.forEach((cid) => {
-      formData.append("categoryIds[]", String(cid));
-    });
-
+    // Append deleted image IDs
     formData.append("deletedImageIds", JSON.stringify(deletedImages));
 
+    // Append new images
     newImages.forEach((file) => {
-      formData.append("images", file);
+      formData.append("images", file); // MUST match backend Multer field
     });
 
     try {
@@ -122,119 +110,93 @@ function EditSellerProduct() {
           },
         },
       );
+
       navigate("/seller/products/");
     } catch (err) {
       console.error("Update failed:", err);
     }
   };
 
-  if (loading)
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
-      </div>
-    );
+  if (loading) return <p className="mt-10 text-center">Loading...</p>;
 
   return (
-    <div className="mx-auto mt-10 mb-10 max-w-5xl rounded-2xl bg-white p-8 shadow-xl">
-      <h1 className="mb-6 text-3xl font-bold text-gray-800">Edit Product</h1>
+    <div className="mx-auto mt-10 max-w-5xl rounded-2xl bg-white p-8 shadow-xl">
+      <h1 className="mb-6 text-3xl font-bold">Edit Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
-          <label className="font-semibold text-gray-700">Title</label>
+          <label className="font-semibold">Title</label>
           <input
             name="title"
             value={form.title}
             onChange={handleChange}
-            className="mt-2 w-full rounded-lg border border-gray-300 p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            className="mt-2 w-full rounded-lg border p-3 focus:ring-2 focus:ring-purple-500"
           />
         </div>
 
         {/* Price & Stock */}
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="font-semibold text-gray-700">Price</label>
+            <label className="font-semibold">Price</label>
             <input
               name="price"
               type="number"
               value={form.price}
               onChange={handleChange}
-              className="mt-2 w-full rounded-lg border border-gray-300 p-3 focus:outline-none"
+              className="mt-2 w-full rounded-lg border p-3"
             />
           </div>
+
           <div>
-            <label className="font-semibold text-gray-700">Stock</label>
+            <label className="font-semibold">Stock</label>
             <input
               name="stock"
               type="number"
               value={form.stock}
               onChange={handleChange}
-              className="mt-2 w-full rounded-lg border border-gray-300 p-3 focus:outline-none"
+              className="mt-2 w-full rounded-lg border p-3"
             />
           </div>
         </div>
 
-        {/* Categories */}
-        <div>
-          <label className="mb-2 block font-semibold text-gray-700">
-            Categories * — select all that apply
-          </label>
-          <CategoryCheckboxes
-            selectedIds={selectedCategoryIds}
-            onChange={setSelectedCategoryIds}
-          />
-          {selectedCategoryIds.length > 0 && (
-            <p className="mt-1 text-xs text-green-600">
-              {selectedCategoryIds.length} categor
-              {selectedCategoryIds.length === 1 ? "y" : "ies"} selected
-            </p>
-          )}
-        </div>
-
         {/* Short Description */}
         <div>
-          <label className="font-semibold text-gray-700">
-            Short Description
-          </label>
+          <label className="font-semibold">Short Description</label>
           <input
             name="shortDescription"
             value={form.shortDescription}
             onChange={handleChange}
-            className="mt-2 w-full rounded-lg border border-gray-300 p-3 focus:outline-none"
+            className="mt-2 w-full rounded-lg border p-3"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="font-semibold text-gray-700">Description</label>
+          <label className="font-semibold">Description</label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             rows={4}
-            className="mt-2 w-full rounded-lg border border-gray-300 p-3 focus:outline-none"
+            className="mt-2 w-full rounded-lg border p-3"
           />
         </div>
 
         {/* Existing Images */}
         <div>
-          <label className="font-semibold text-gray-700">Existing Images</label>
+          <label className="font-semibold">Existing Images</label>
           <div className="mt-3 flex flex-wrap gap-4">
-            {existingImages.length === 0 && (
-              <p className="text-sm text-gray-400">No existing images</p>
-            )}
             {existingImages.map((img) => (
               <div key={img.id} className="relative">
                 <img
                   src={`http://localhost:8001/${img.path}`}
                   className="h-28 w-28 rounded-lg object-cover shadow"
-                  alt="product"
                 />
                 <button
                   type="button"
                   onClick={() => removeOldImage(img.id)}
-                  className="absolute top-1 right-1 rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+                  className="absolute top-1 right-1 rounded bg-red-500 px-2 py-1 text-xs text-white"
                 >
                   ✕
                 </button>
@@ -243,27 +205,27 @@ function EditSellerProduct() {
           </div>
         </div>
 
-        {/* New Images */}
+        {/* Upload New Images */}
         <div>
-          <label className="font-semibold text-gray-700">Add New Images</label>
+          <label className="font-semibold">Add New Images</label>
           <input
             type="file"
             multiple
             onChange={handleNewImages}
-            className="mt-2 block"
+            className="mt-2"
           />
+
           <div className="mt-4 flex flex-wrap gap-4">
             {newImages.map((file, index) => (
               <div key={index} className="relative">
                 <img
                   src={URL.createObjectURL(file)}
                   className="h-28 w-28 rounded-lg object-cover shadow"
-                  alt="new"
                 />
                 <button
                   type="button"
                   onClick={() => removeNewImage(index)}
-                  className="absolute top-1 right-1 cursor-pointer rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+                  className="absolute top-1 right-1 rounded bg-red-500 px-2 py-1 text-xs text-white cursor-pointer"
                 >
                   ✕
                 </button>
@@ -275,7 +237,7 @@ function EditSellerProduct() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full cursor-pointer rounded-xl bg-purple-600 py-3 font-semibold text-white transition hover:bg-purple-700"
+          className="w-full rounded-xl bg-purple-600 py-3 font-semibold text-white transition hover:bg-purple-700 cursor-pointer"
         >
           Update Product
         </button>

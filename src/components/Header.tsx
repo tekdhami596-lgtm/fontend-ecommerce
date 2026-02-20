@@ -1,5 +1,5 @@
 import { IoCartOutline } from "react-icons/io5";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, LayoutDashboard } from "lucide-react";
 import Navbar from "./Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -12,23 +12,37 @@ export default function Header() {
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const dispatch = useDispatch();
 
-  const role = user?.role;
+  const role = user?.role; // "admin" | "seller" | "buyer" | undefined
   const isBuyer = !role || role === "buyer";
+  const isAdmin = role === "admin";
 
   return (
-    <>
-      {/* ✅ FIXED: removed bottom border/margin that caused gap */}
-      <header className="sticky top-0 z-50 w-full bg-indigo-600 text-sm text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-end gap-4 px-4 py-2.5">
+    <div className="sticky top-0 z-50">
+      {/* Top bar */}
+      <header className="w-full bg-purple-600 text-sm text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-4 px-4 py-2">
+          {/* User greeting */}
           {user?.firstName && (
-            <span className="hidden text-sm font-medium sm:inline">
+            <span className="hidden text-base sm:inline">
               {user.firstName} {user.lastName}
             </span>
           )}
 
+          {/* Admin Panel button — only for admin */}
+          {isAdmin && (
+            <Link
+              to="/admin/dashboard"
+              className="flex items-center gap-1.5 rounded-md bg-white/20 px-3 py-1 text-xs font-semibold text-white transition hover:bg-white/30"
+            >
+              <LayoutDashboard size={14} />
+              Admin Panel
+            </Link>
+          )}
+
+          {/* Auth: Login / Logout */}
           {user ? (
             <button
-              className="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-200"
+              className="flex cursor-pointer items-center gap-1 hover:text-pink-300"
               onClick={() => dispatch(logout())}
             >
               <LogOut size={16} />
@@ -37,21 +51,19 @@ export default function Header() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-1.5 transition-colors hover:text-indigo-200"
+              className="flex items-center gap-1 hover:text-pink-300"
             >
               <User size={16} />
               <span>Login</span>
             </Link>
           )}
 
+          {/* Cart — buyers only */}
           {isBuyer && (
-            <Link
-              to="/cart"
-              className="relative transition-colors hover:text-indigo-200"
-            >
+            <Link to="/cart" className="relative hover:text-pink-300">
               <IoCartOutline size={22} />
               {totalQuantity > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs font-bold">
+                <span className="absolute -top-2 -right-2 rounded-full bg-pink-500 px-1 text-xs">
                   {totalQuantity}
                 </span>
               )}
@@ -61,6 +73,6 @@ export default function Header() {
       </header>
 
       <Navbar role={role} />
-    </>
+    </div>
   );
 }
