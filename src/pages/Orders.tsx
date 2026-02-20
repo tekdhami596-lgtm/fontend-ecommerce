@@ -216,7 +216,7 @@ export default function Orders() {
                 <div className="px-6 pb-4">
                   <button
                     onClick={() => toggleExpand(order.id)}
-                    className="flex items-center gap-2 text-sm font-semibold text-green-600 transition-colors hover:text-green-700"
+                    className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-green-600 transition-colors hover:text-green-700"
                   >
                     {isExpanded ? (
                       <>
@@ -298,11 +298,11 @@ export default function Orders() {
                       ))}
 
                       {/* Items total */}
-                      <div className="mt-1 flex items-center justify-between border-t border-gray-200 pt-2">
+                      <div className="mt-1 flex cursor-pointer items-center justify-between border-t border-gray-200 pt-2">
                         <span className="text-sm font-semibold text-gray-600">
                           Order Total
                         </span>
-                        <span className="text-base font-extrabold text-green-600">
+                        <span className="cursor-pointer text-base font-extrabold text-green-600">
                           Rs. {orderTotal}
                         </span>
                       </div>

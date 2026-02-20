@@ -97,7 +97,7 @@ export default function Cart() {
                   <img
                     src={
                       item.image
-                        ? `http://localhost:8001/${item.image}`
+                        ? `${import.meta.env.VITE_API_URL}/${item.image}`
                         : NoImage
                     }
                     alt={item.title}
@@ -154,7 +154,7 @@ export default function Cart() {
         </div>
 
         <button
-        onClick={()=>navigate("/checkout")}
+          onClick={() => navigate("/checkout")}
           disabled={cartItems.length === 0}
           className="w-full cursor-pointer rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:bg-gray-400"
         >
