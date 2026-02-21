@@ -3,6 +3,7 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import notify from "../../helpers/notify";
 import { useNavigate } from "react-router-dom";
 import CategoryCheckboxes from "../../components/CategoryCheckboxes";
+import api from "../../api/axios";
 
 type ProductForm = {
   title: string;
@@ -100,9 +101,7 @@ function CreateSellerProduct() {
         formData.append("images[]", file);
       });
 
-      await axios.post("http://localhost:8001/api/seller/products", formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.post("/seller/products", formData);
 
       setForm({
         title: "",

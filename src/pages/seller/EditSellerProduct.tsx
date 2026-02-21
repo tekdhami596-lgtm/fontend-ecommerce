@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CategoryCheckboxes from "../../components/CategoryCheckboxes";
 import notify from "../../helpers/notify";
+import api from "../../api/axios";
 
 interface ImageType {
   id: number;
@@ -31,14 +32,7 @@ function EditSellerProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8001/api/seller/products/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
+        const res = await api.get(`/seller/products/${id}`);
 
         const product = res.data.data;
 
@@ -114,15 +108,7 @@ function EditSellerProduct() {
     });
 
     try {
-      const res = await axios.patch(
-        `http://localhost:8001/api/seller/products/${id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
+      const res = await api.patch(`/seller/products/${id}`, formData);
       notify.success(res.data.message);
       navigate("/seller/products/");
     } catch (err: any) {
@@ -230,7 +216,7 @@ function EditSellerProduct() {
             {existingImages.map((img) => (
               <div key={img.id} className="relative">
                 <img
-                  src={`http://localhost:8001/${img.path}`}
+                  src={`${import.meta.env.VITE_API_URL}/${img.path}`}
                   className="h-28 w-28 rounded-lg object-cover shadow"
                   alt="product"
                 />

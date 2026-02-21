@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../api/axios";
 
 export interface CategoryTree {
   id: number;
@@ -35,7 +35,7 @@ export const fetchCategoryTree = createAsyncThunk(
   "categories/fetchTree",
   async (_, thunkAPI) => {
     try {
-      const res = await axios.get("http://localhost:8001/api/categories");
+      const res = await api.get("/categories");
       return res.data.data as CategoryTree[];
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -50,7 +50,7 @@ export const fetchCategoryFlat = createAsyncThunk(
   "categories/fetchFlat",
   async (_, thunkAPI) => {
     try {
-      const res = await axios.get("http://localhost:8001/api/categories/flat");
+      const res = await api.get("/categories/flat");
       return res.data.data as FlatCategory[];
     } catch (err: any) {
       return thunkAPI.rejectWithValue(

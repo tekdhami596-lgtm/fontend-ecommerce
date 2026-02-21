@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "../../api/axios";
 
 export interface AdminStats {
   totalUsers: number;
@@ -28,9 +29,7 @@ export const fetchAdminStats = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8001/api/admin/stats", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/admin/stats");
       return res.data.data as AdminStats;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(

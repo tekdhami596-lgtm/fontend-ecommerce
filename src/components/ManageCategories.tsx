@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { Pencil, Trash2, Plus, ChevronDown, ChevronRight } from "lucide-react";
+import api from "../api/axios";
 
 interface Category {
   id: number;
@@ -37,7 +38,7 @@ export default function ManageCategories({ viewMode }: Props) {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8001/api/categories/flat");
+      const res = await api.get("/categories/flat");
       let data: Category[] = res.data.data;
 
       // Sellers only see their own
@@ -78,21 +79,13 @@ export default function ManageCategories({ viewMode }: Props) {
     try {
       if (editingId) {
         // Update
-        await axios.patch(
-          `http://localhost:8001/api/categories/${editingId}`,
-          { title: formTitle },
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        await api.patch(`/categories/${editingId}`, { title: formTitle });
       } else {
         // Create
-        await axios.post(
-          "http://localhost:8001/api/categories",
-          {
-            title: formTitle,
-            parentId: formParentId || null,
-          },
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        await api.post("/categories", {
+          title: formTitle,
+          parentId: formParentId || null,
+        });
       }
 
       setShowForm(false);
@@ -116,9 +109,7 @@ export default function ManageCategories({ viewMode }: Props) {
       return;
 
     try {
-      await axios.delete(`http://localhost:8001/api/categories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/categories/${id}`);
       setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to delete");
