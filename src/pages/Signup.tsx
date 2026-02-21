@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import notify from "../helpers/notify";
 import api from "../api/axios";
+import { Eye, EyeOff } from "lucide-react";
 
 type Role = "buyer" | "seller";
 
@@ -34,6 +35,7 @@ function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<ValidationError[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<SignupFormData>({
     firstName: "",
@@ -201,9 +203,9 @@ function SignupForm() {
         </div>
 
         {/* Password */}
-        <div className="mb-4">
+        <div className="relative mb-4">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password (min 6 characters)"
             value={formData.password}
@@ -211,6 +213,13 @@ function SignupForm() {
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
           <Err name="password" />
+          <button
+            onClick={() => setShowPassword(!showPassword)}
+            type="button"
+            className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
         </div>
 
         {/* Phone (both roles) */}

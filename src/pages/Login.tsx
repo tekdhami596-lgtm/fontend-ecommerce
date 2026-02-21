@@ -3,6 +3,7 @@ import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slice/userSlice";
 import api from "../api/axios";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -82,16 +84,25 @@ const Login = () => {
           <label htmlFor="password" className="mb-2 text-gray-600">
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            placeholder="Enter your password"
-            className="rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Enter your password"
+              className="w-full rounded-md border border-gray-300 p-2 pr-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
+            <button
+              onClick={() => setShowPassword(!showPassword)}
+              type="button"
+              className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <p className="cursor-pointer text-right text-sm text-gray-500 hover:underline">
