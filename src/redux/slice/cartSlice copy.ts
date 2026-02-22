@@ -14,26 +14,7 @@ interface CartState {
   items: CartItem[];
 }
 
-// ── localStorage helpers ────────────────────────────────────────────────────
-function loadCart(): CartItem[] {
-  try {
-    const raw = localStorage.getItem("dokomart_cart");
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveCart(items: CartItem[]) {
-  try {
-    localStorage.setItem("dokomart_cart", JSON.stringify(items));
-  } catch {
-    // storage quota exceeded — fail silently
-  }
-}
-
-// ── Rehydrate from localStorage on app start ───────────────────────────────
-const initialState: CartState = { items: loadCart() };
+const initialState: CartState = { items: [] };
 
 const cartSlice = createSlice({
   name: "cart",
@@ -41,9 +22,7 @@ const cartSlice = createSlice({
   reducers: {
     setCart: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
-      saveCart(state.items);
     },
-
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const existing = state.items.find(
         (i) => i.productId === action.payload.productId,
@@ -53,26 +32,19 @@ const cartSlice = createSlice({
       } else {
         state.items.push(action.payload);
       }
-      saveCart(state.items);
     },
-
     updateCart: (
       state,
       action: PayloadAction<{ id: number; quantity: number }>,
     ) => {
       const item = state.items.find((i) => i.id === action.payload.id);
       if (item) item.quantity = action.payload.quantity;
-      saveCart(state.items);
     },
-
     removeFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((i) => i.id !== action.payload);
-      saveCart(state.items);
     },
-
     clearCart: (state) => {
       state.items = [];
-      saveCart(state.items);
     },
   },
 });

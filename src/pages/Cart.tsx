@@ -18,7 +18,7 @@ export default function Cart() {
     const fetchCart = async () => {
       try {
         const res = await cartApi.get();
-        console.log(res.data.data);
+      
         const items = res.data.data.map((c: any) => ({
           id: c.id,
           productId: c.product.id,

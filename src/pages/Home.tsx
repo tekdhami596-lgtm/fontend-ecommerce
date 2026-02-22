@@ -1,11 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
-import { addToCart } from "../redux/slice/cartSlice";
+import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
 import api from "../api/axios";
+import cartApi from "../api/cart.api";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  SlidersHorizontal,
+  Loader2,
+} from "lucide-react";
+import notify from "../helpers/notify";
 
 type ProductImageType = { path: string };
 type Product = {
@@ -17,6 +25,23 @@ type Product = {
   images: ProductImageType[];
   categories: { id: number; title: string }[];
 };
+
+type SortOption =
+  | "default"
+  | "priceAsc"
+  | "priceDesc"
+  | "titleAsc"
+  | "titleDesc";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "default", label: "Default" },
+  { value: "priceAsc", label: "Price: Low → High" },
+  { value: "priceDesc", label: "Price: High → Low" },
+  { value: "titleAsc", label: "Name: A → Z" },
+  { value: "titleDesc", label: "Name: Z → A" },
+];
+
+const PAGE_LIMIT = 10;
 
 function flattenTree(
   nodes: CategoryTree[],
@@ -51,13 +76,22 @@ function getAllDescendantIds(
 
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const user = useSelector((state: RootState) => state.user.data);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const isSeller = user?.role === "seller";
   const { tree: categoryTree } = useSelector(
     (state: RootState) => state.categories,
   );
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [activeSort, setActiveSort] = useState<SortOption>("default");
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(
     searchParams.get("categoryId")
       ? Number(searchParams.get("categoryId"))
@@ -66,6 +100,7 @@ export default function HomePage() {
 
   const flatCategories = flattenTree(categoryTree);
   const topLevelCategories = categoryTree;
+  const hasMore = products.length < totalCount;
 
   useEffect(() => {
     if (categoryTree.length === 0) dispatch(fetchCategoryTree());
@@ -78,30 +113,58 @@ export default function HomePage() {
 
   useEffect(() => {
     if (activeCategoryId && flatCategories.length === 0) return;
+    setProducts([]);
+    setPage(1);
+    setTotalCount(0);
+    doFetch(1, true);
+  }, [activeCategoryId, activeSort, categoryTree]);
 
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-
-        if (activeCategoryId) {
-          const allIds = getAllDescendantIds(activeCategoryId, flatCategories);
-          const params = new URLSearchParams();
-          allIds.forEach((id) => params.append("categoryId", String(id)));
-          const res = await api.get(`/products?${params.toString()}`);
-          setProducts(res.data.data || []);
-        } else {
-          const res = await api.get("/products");
-          setProducts(res.data.data || []);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest("#home-sort-dropdown"))
+        setSortOpen(false);
     };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
-    fetchProducts();
-  }, [activeCategoryId, categoryTree]);
+  const buildParams = useCallback(
+    (pageNum: number): URLSearchParams => {
+      const params = new URLSearchParams();
+      params.set("page", String(pageNum));
+      params.set("limit", String(PAGE_LIMIT));
+      if (activeSort !== "default") params.set("sort", activeSort);
+      if (activeCategoryId) {
+        const allIds = getAllDescendantIds(activeCategoryId, flatCategories);
+        allIds.forEach((id) => params.append("categoryId", String(id)));
+      }
+      return params;
+    },
+    [activeCategoryId, activeSort, flatCategories],
+  );
+
+  const doFetch = async (pageNum: number, reset: boolean) => {
+    try {
+      reset ? setLoading(true) : setLoadingMore(true);
+      const params = buildParams(pageNum);
+      const res = await api.get(`/products?${params.toString()}`);
+      const incoming: Product[] = res.data.data || [];
+      const total: number = res.data.count ?? res.data.total ?? incoming.length;
+      setTotalCount(total);
+      setProducts((prev) => (reset ? incoming : [...prev, ...incoming]));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    const next = page + 1;
+    setPage(next);
+    doFetch(next, false);
+  };
 
   const handleCategorySelect = (id: number | null) => {
     setActiveCategoryId(id);
@@ -109,27 +172,50 @@ export default function HomePage() {
     else setSearchParams({});
   };
 
-  const handleAddToCart = (product: Product) => {
-    dispatch(
-      addToCart({
-        id: 0,
-        productId: product.id,
-        title: product.title,
-        price: product.price,
-        stock: product.stock,
-        image: product.images?.[0]?.path || "",
-        quantity: 1,
-      }),
-    );
+  const handleSortChange = (sort: SortOption) => {
+    setActiveSort(sort);
+    setSortOpen(false);
   };
 
+  const handleAddToCart = async (product: Product) => {
+    if (!user) {
+      notify.error("Please login first");
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
+    if (isSeller) {
+      notify.error("Sellers cannot add items to cart");
+      return;
+    }
+    try {
+      const res = await cartApi.create({ productId: product.id });
+      const cartData = res.data.data;
+      dispatch(
+        addToCartRedux({
+          id: cartData.id,
+          productId: product.id,
+          title: product.title,
+          price: product.price,
+          stock: product.stock,
+          quantity: cartData.quantity ?? 1,
+          image: product.images?.[0]?.path || "",
+        }),
+      );
+      notify.success("Item added to cart successfully");
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+      notify.error("Failed to add to cart");
+    }
+  };
   const activeCategoryName = flatCategories.find(
     (c) => c.id === activeCategoryId,
   )?.title;
+  const activeSortLabel =
+    SORT_OPTIONS.find((o) => o.value === activeSort)?.label ?? "Sort";
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <div className="bg-gradient-to-r from-indigo-900 to-purple-700 px-4 py-12 text-center text-white sm:px-6 sm:py-16 md:py-20">
         <h1 className="mb-3 text-3xl font-bold sm:mb-4 sm:text-4xl md:text-5xl">
           Welcome to DokoMart
@@ -141,10 +227,10 @@ export default function HomePage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
-        {/* ── Categories ────────────────────────────────────────────── */}
+        {/* ── Categories + Sort ── */}
         <div className="mb-8">
+          {/* ── Line 1: Category pills ── */}
           <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
-            {/* All pill */}
             <button
               onClick={() => handleCategorySelect(null)}
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
@@ -155,7 +241,6 @@ export default function HomePage() {
             >
               All
             </button>
-
             {topLevelCategories.map((cat) => (
               <button
                 key={cat.id}
@@ -171,7 +256,77 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Sub-categories strip */}
+          {/* ── Line 2: Product count (left) + Sort button (right) ── */}
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-xs text-gray-400">
+              {!loading && totalCount > 0 && (
+                <>
+                  <span className="font-semibold text-gray-600">
+                    {products.length}
+                  </span>
+                  {" of "}
+                  <span className="font-semibold text-gray-600">
+                    {totalCount}
+                  </span>
+                  {" product"}
+                  {totalCount !== 1 ? "s" : ""}
+                </>
+              )}
+            </p>
+
+            <div id="home-sort-dropdown" className="relative">
+              <button
+                onClick={() => setSortOpen((v) => !v)}
+                className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all ${
+                  activeSort !== "default"
+                    ? "border-indigo-400 bg-indigo-600 text-white shadow-sm"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
+                }`}
+              >
+                <ArrowUpDown size={14} />
+                <span>
+                  {activeSort !== "default" ? activeSortLabel : "Sort by"}
+                </span>
+                <ChevronDown
+                  size={13}
+                  className={`transition-transform duration-200 ${sortOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {sortOpen && (
+                <div className="absolute top-11 right-0 z-30 w-52 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl ring-1 ring-black/5">
+                  <div className="flex items-center gap-1.5 border-b border-gray-50 px-3 py-2.5">
+                    <SlidersHorizontal size={11} className="text-gray-400" />
+                    <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                      Sort by
+                    </span>
+                  </div>
+                  <div className="p-1.5">
+                    {SORT_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => handleSortChange(opt.value)}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm transition-all ${
+                          activeSort === opt.value
+                            ? "bg-indigo-50 font-semibold text-indigo-600"
+                            : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {opt.label}
+                        {activeSort === opt.value && (
+                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[9px] text-white">
+                            ✓
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── Sub-categories strip ── */}
           {activeCategoryId &&
             (() => {
               const activeParent = topLevelCategories.find(
@@ -194,24 +349,37 @@ export default function HomePage() {
               );
             })()}
 
-          {/* Active filter label */}
-          {activeCategoryId && (
-            <div className="mt-3 flex items-center gap-2">
-              <span className="text-xs text-gray-400">Showing:</span>
-              <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
-                {activeCategoryName}
-              </span>
-              <button
-                onClick={() => handleCategorySelect(null)}
-                className="text-xs text-gray-400 underline hover:text-red-500"
-              >
-                Clear
-              </button>
+          {/* ── Active filter chips ── */}
+          {(activeCategoryId || activeSort !== "default") && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-400">Active filters:</span>
+              {activeCategoryId && (
+                <span className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+                  {activeCategoryName}
+                  <button
+                    onClick={() => handleCategorySelect(null)}
+                    className="text-indigo-400 transition-colors hover:text-red-500"
+                  >
+                    ✕
+                  </button>
+                </span>
+              )}
+              {activeSort !== "default" && (
+                <span className="flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-600">
+                  {activeSortLabel}
+                  <button
+                    onClick={() => handleSortChange("default")}
+                    className="text-violet-400 transition-colors hover:text-red-500"
+                  >
+                    ✕
+                  </button>
+                </span>
+              )}
             </div>
           )}
         </div>
 
-        {/* ── Products Grid ──────────────────────────────────────────── */}
+        {/* ── Products Grid ── */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
@@ -236,17 +404,12 @@ export default function HomePage() {
           </div>
         ) : (
           <>
-            <p className="mb-4 text-xs text-gray-500 sm:text-sm">
-              {products.length} product{products.length !== 1 ? "s" : ""} found
-            </p>
-
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {products.map((product) => (
                 <div
                   key={product.id}
                   className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  {/* Image */}
                   <Link
                     to={`/products/${product.id}`}
                     className="block shrink-0"
@@ -256,7 +419,7 @@ export default function HomePage() {
                         <img
                           src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
                           alt={product.title}
-                          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                          className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <div className="flex h-full flex-col items-center justify-center gap-1 bg-gray-50">
@@ -276,7 +439,6 @@ export default function HomePage() {
                     </div>
                   </Link>
 
-                  {/* Card body */}
                   <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3">
                     <div className="space-y-1">
                       {product.categories?.length > 0 && (
@@ -307,20 +469,53 @@ export default function HomePage() {
                           </span>
                         )}
                       </div>
-
                       <button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product);
+                        }}
                         disabled={product.stock === 0}
                         className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40 sm:py-2 sm:text-sm"
                       >
                         <IoCartOutline size={15} />
-                        <span>Add to Cart</span>
+                        <span>
+                          {" "}
+                          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                        </span>
                       </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* ── Load More ── */}
+            {hasMore ? (
+              <div className="mt-10 flex flex-col items-center gap-2">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="flex min-w-[180px] items-center justify-center gap-2 rounded-2xl border-2 border-indigo-600 bg-white px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-600 hover:text-white disabled:opacity-60"
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" /> Loading…
+                    </>
+                  ) : (
+                    "Load More"
+                  )}
+                </button>
+                <p className="text-xs text-gray-400">
+                  {products.length} of {totalCount} products shown
+                </p>
+              </div>
+            ) : (
+              products.length > PAGE_LIMIT && (
+                <p className="mt-8 text-center text-xs text-gray-400">
+                  ✓ All {totalCount} products loaded
+                </p>
+              )
+            )}
           </>
         )}
       </div>

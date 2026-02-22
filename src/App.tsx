@@ -14,7 +14,6 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-
     if (!token) {
       setIsLoading(false);
       return;

@@ -5,6 +5,7 @@ import api from "../api/axios";
 import { Eye, EyeOff } from "lucide-react";
 
 type Role = "buyer" | "seller";
+type Gender = "male" | "female" | "other";
 
 interface BaseFormData {
   firstName: string;
@@ -12,6 +13,8 @@ interface BaseFormData {
   email: string;
   password: string;
   phone: string;
+  gender: Gender | "";
+  dateOfBirth: string;
   role: Role;
 }
 interface BuyerFormData extends BaseFormData {
@@ -43,6 +46,8 @@ function SignupForm() {
     email: "",
     password: "",
     phone: "",
+    gender: "",
+    dateOfBirth: "",
     role: "buyer",
     deliveryAddress: "",
   } as BuyerFormData);
@@ -54,6 +59,8 @@ function SignupForm() {
       email: formData.email,
       password: formData.password,
       phone: formData.phone,
+      gender: formData.gender,
+      dateOfBirth: formData.dateOfBirth,
     };
     setFormData(
       role === "buyer"
@@ -63,7 +70,9 @@ function SignupForm() {
     setErrors({});
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined! }));
@@ -105,8 +114,16 @@ function SignupForm() {
     setApiError([]);
     if (!validate()) return;
     setLoading(true);
+
+    // send null for empty optional fields so backend stores null cleanly
+    const payload = {
+      ...formData,
+      gender: formData.gender || null,
+      dateOfBirth: formData.dateOfBirth || null,
+    };
+
     try {
-      await api.post("/auth/signup", formData);
+      await api.post("/auth/signup", payload);
       notify.success("Account created! Please log in.");
       navigate("/login");
     } catch (err: any) {
@@ -222,7 +239,7 @@ function SignupForm() {
           </button>
         </div>
 
-        {/* Phone (both roles) */}
+        {/* Phone */}
         <div className="mb-4">
           <input
             type="tel"
@@ -233,6 +250,35 @@ function SignupForm() {
             className="w-full rounded border px-3 py-2 text-sm outline-none focus:border-pink-500"
           />
           <Err name="phone" />
+        </div>
+
+        {/* Gender + Date of Birth row */}
+        <div className="mb-4 flex gap-3">
+          <div className="flex-1">
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full rounded border px-3 py-2 text-sm text-gray-500 outline-none focus:border-pink-500"
+            >
+              <option value="">Gender (optional)</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <Err name="gender" />
+          </div>
+          <div className="flex-1">
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              max={new Date().toISOString().split("T")[0]} // can't pick future date
+              className="w-full rounded border px-3 py-2 text-sm text-gray-500 outline-none focus:border-pink-500"
+            />
+            <Err name="dateOfBirth" />
+          </div>
         </div>
 
         {/* Buyer only */}

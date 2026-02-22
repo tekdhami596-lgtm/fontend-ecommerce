@@ -21,6 +21,11 @@ import AdminSellers from "../pages/admin/AdminSellers";
 import AdminProducts from "../pages/admin/AdminProducts";
 import AdminOrders from "../pages/admin/AdminOrders";
 import ManageCategories from "../components/ManageCategories";
+import AboutUs from "../pages/AboutUs";
+import MyAccount from "../pages/Myaccount";
+import ContactUs from "../components/ContactUs";
+import EsewaSuccess from "../pages/EsewaSuccess";
+import EsewaFailure from "../pages/EsewaFailure";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +36,7 @@ export const router = createBrowserRouter([
       { path: "/", Component: Home },
       { path: "login", Component: Login },
       { path: "signup", Component: Signup },
+      { path: "aboutUs", Component: AboutUs },
       {
         path: "products",
         children: [
@@ -38,6 +44,7 @@ export const router = createBrowserRouter([
           { path: ":id", Component: ProductDetailPage },
         ],
       },
+      { path: "contact-us", Component: ContactUs },
 
       // ── Buyer (any authenticated user) ──────────────────────
       {
@@ -47,6 +54,9 @@ export const router = createBrowserRouter([
           { path: "checkout", Component: Checkout },
           { path: "order-success/:id", Component: orderSuccess },
           { path: "my-orders", Component: Orders },
+          { path: "my-account", Component: MyAccount },
+          { path: "/esewa/success", Component: EsewaSuccess },
+          { path: "/esewa/failure", Component: EsewaFailure },
         ],
       },
 

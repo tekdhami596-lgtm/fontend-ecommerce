@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserRole = "buyer" | "seller" | "admin";
+export type Gender = "male" | "female" | "other";
 
 interface User {
   id: number;
@@ -9,6 +10,8 @@ interface User {
   email: string;
   role: UserRole;
   phone?: string;
+  gender?: Gender;
+  dateOfBirth?: string; // "YYYY-MM-DD" from backend DATEONLY
   deliveryAddress?: string;
   storeName?: string;
   businessAddress?: string;
@@ -47,3 +50,7 @@ export const selectIsLoggedIn = (state: { user: UserState }) =>
   !!state.user.data;
 export const selectIsSeller = (state: { user: UserState }) =>
   state.user.data?.role === "seller";
+export const selectIsBuyer = (state: { user: UserState }) =>
+  state.user.data?.role === "buyer";
+export const selectIsAdmin = (state: { user: UserState }) =>
+  state.user.data?.role === "admin";
