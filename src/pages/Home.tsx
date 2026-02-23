@@ -81,7 +81,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useSelector((state: RootState) => state.user.data);
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+
   const isSeller = user?.role === "seller";
   const { tree: categoryTree } = useSelector(
     (state: RootState) => state.categories,

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { Pencil, Trash2, Plus, ChevronDown, ChevronRight } from "lucide-react";

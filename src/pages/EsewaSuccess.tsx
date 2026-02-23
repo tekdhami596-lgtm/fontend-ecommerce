@@ -8,7 +8,7 @@ type VerifyState = "verifying" | "success" | "failed";
 
 export default function EsewaSuccess() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const [state, setState] = useState<VerifyState>("verifying");
   const [orderData, setOrderData] = useState<any>(null);

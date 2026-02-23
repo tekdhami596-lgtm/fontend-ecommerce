@@ -17,7 +17,7 @@ import {
   ChevronRight,
   Package,
   Pencil,
-  Plus,
+  
   Eye,
   EyeOff,
   Bell,
@@ -279,19 +279,7 @@ const ProfileSection = () => {
   );
 };
 
-// ── OrdersSection (no backend yet) ────────────────────
-const OrdersSection = () => (
-  <div>
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-900">My Orders</h2>
-      <p className="text-sm text-gray-500">Track and manage your orders</p>
-    </div>
-    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-      <Package size={48} className="mb-3 opacity-30" />
-      <p className="text-sm">No orders yet</p>
-    </div>
-  </div>
-);
+
 
 const AddressesSection = () => {
   const reduxUser = useSelector(selectUser);
