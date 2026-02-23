@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { ShoppingBag } from "lucide-react";
+import api from "../../api/axios";
 
 interface OrderItem {
   id: number;
@@ -42,13 +42,11 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const token = localStorage.getItem("token");
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8001/api/admin/orders", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get("/admin/orders", {
         params: { paymentStatus: statusFilter },
       });
       setOrders(res.data.data);
@@ -65,11 +63,7 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (id: number, paymentStatus: string) => {
     try {
-      await axios.patch(
-        `http://localhost:8001/api/admin/orders/${id}/status`,
-        { paymentStatus },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await api.patch(`/admin/orders/${id}/status`, { paymentStatus });
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, paymentStatus } : o)),
       );

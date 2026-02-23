@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import api from "../../api/axios";
 
 export interface AdminStats {
@@ -28,7 +27,6 @@ export const fetchAdminStats = createAsyncThunk(
   "admin/fetchStats",
   async (_, thunkAPI) => {
     try {
-      const token = localStorage.getItem("token");
       const res = await api.get("/admin/stats");
       return res.data.data as AdminStats;
     } catch (err: any) {

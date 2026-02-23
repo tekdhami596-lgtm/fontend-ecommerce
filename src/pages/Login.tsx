@@ -30,7 +30,7 @@ const Login = () => {
       const { data } = await api.post("/auth/login", formData);
 
       dispatch(login(data.user));
-      localStorage.setItem("token", data.token);
+  
 
       // Role-based redirect
       if (data.user.role === "seller") {

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import notify from "../../helpers/notify";
 import { useNavigate } from "react-router-dom";
@@ -83,7 +82,7 @@ function CreateSellerProduct() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
+
       const formData = new FormData();
 
       formData.append("title", form.title);

@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import api from "../../api/axios";
+import { AppDispatch } from "../store";
 
 export type UserRole = "buyer" | "seller" | "admin";
 export type Gender = "male" | "female" | "other";
@@ -11,7 +13,7 @@ interface User {
   role: UserRole;
   phone?: string;
   gender?: Gender;
-  dateOfBirth?: string; // "YYYY-MM-DD" from backend DATEONLY
+  dateOfBirth?: string;
   deliveryAddress?: string;
   storeName?: string;
   businessAddress?: string;
@@ -32,7 +34,7 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.data = null;
-      localStorage.removeItem("token");
+    
     },
     updateProfile: (state, action: PayloadAction<Partial<User>>) => {
       if (state.data) state.data = { ...state.data, ...action.payload };
@@ -43,7 +45,16 @@ export const userSlice = createSlice({
 export const { login, logout, updateProfile } = userSlice.actions;
 export default userSlice.reducer;
 
-// ── Selectors ──────────────────────────────────────────────
+// ── Logout thunk — clears cookie on backend then clears Redux state ──────────
+export const logoutUser = () => async (dispatch: AppDispatch) => {
+  try {
+    await api.post("/auth/logout");
+  } finally {
+    dispatch(logout());
+  }
+};
+
+// ── Selectors ────────────────────────────────────────────────────────────────
 export const selectUser = (state: { user: UserState }) => state.user.data;
 export const selectRole = (state: { user: UserState }) => state.user.data?.role;
 export const selectIsLoggedIn = (state: { user: UserState }) =>

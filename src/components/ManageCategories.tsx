@@ -33,7 +33,7 @@ export default function ManageCategories({ viewMode }: Props) {
   // Collapse state for tree view
   const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
 
-  const token = localStorage.getItem("token");
+
 
   const fetchCategories = async () => {
     try {

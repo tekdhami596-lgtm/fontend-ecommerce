@@ -125,7 +125,7 @@ export default function CancelOrder() {
         </p>
         <Link
           to="/my-orders"
-          className="rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-slate-700"
+          className="cursor-pointer rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-slate-700"
         >
           ← Back to Orders
         </Link>
@@ -187,13 +187,13 @@ export default function CancelOrder() {
             <div className="flex flex-col gap-3 pt-1">
               <Link
                 to="/my-orders"
-                className="w-full rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-700"
+                className="w-full cursor-pointer rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-700"
               >
                 View My Orders
               </Link>
               <Link
                 to="/"
-                className="w-full rounded-xl border border-slate-200 py-3 text-center text-sm font-semibold text-slate-500 hover:bg-slate-50"
+                className="w-full cursor-pointer rounded-xl border border-slate-200 py-3 text-center text-sm font-semibold text-slate-500 hover:bg-slate-50"
               >
                 Continue Shopping
               </Link>
@@ -483,10 +483,10 @@ export default function CancelOrder() {
           <button
             onClick={handleCancel}
             disabled={cancelling}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-red-600 active:scale-95 disabled:opacity-60"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-red-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-red-600 active:scale-95 disabled:opacity-60"
           >
             {cancelling ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span className="h-4 w-4 animate-spin cursor-pointer rounded-full border-2 border-white border-t-transparent" />
             ) : (
               <svg
                 className="h-4 w-4"
@@ -506,7 +506,7 @@ export default function CancelOrder() {
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="w-full rounded-xl border border-slate-200 py-4 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+            className="w-full cursor-pointer rounded-xl border border-slate-200 py-4 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
           >
             Keep My Order
           </button>

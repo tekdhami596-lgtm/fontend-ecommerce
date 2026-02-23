@@ -311,11 +311,18 @@ const AddressesSection = () => {
             </span>
           </div>
           <p className="text-sm font-semibold text-gray-900">
-            {reduxUser?.firstName} {reduxUser?.lastName}
+            Buyer Name: {reduxUser?.firstName} {reduxUser?.lastName}
           </p>
-          <p className="text-sm text-gray-500">{deliveryAddress}</p>
+          <p className="text-sm text-gray-500">Address: {deliveryAddress}</p>
           {reduxUser?.phone && (
-            <p className="text-sm text-gray-500">{reduxUser.phone}</p>
+            <p className="text-sm text-gray-500">
+              Contact Number: {reduxUser.phone}
+            </p>
+          )}
+          {reduxUser?.email && (
+            <p className="text-sm text-gray-500">
+              Contact Number: {reduxUser.email}
+            </p>
           )}
           <p className="mt-3 text-xs text-gray-400">
             To update this address, go to{" "}

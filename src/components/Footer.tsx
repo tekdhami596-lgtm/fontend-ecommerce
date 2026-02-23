@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300">
-      {/* Trust Bar */}
+      
       <div className="border-b border-gray-700 bg-gray-800">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm">
@@ -91,8 +91,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               {[
                 { label: "Track My Order", href: "/trackOrder" },
-                { label: "Shipping Information", href: "#" },
-                { label: "Cancel Order", href: "orders/:id/cancel" },
+                { label: "Cancel Order", href: "/my-orders" },
                 { label: "FAQs", href: "/contact-us" },
                 { label: "Contact Us", href: "/contact-us" },
               ].map((link) => (

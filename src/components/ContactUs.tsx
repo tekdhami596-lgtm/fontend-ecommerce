@@ -179,7 +179,7 @@ const ContactUs = () => {
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    placeholder="Aarav Shrestha"
+                    placeholder="Your name"
                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
                   />
                 </div>

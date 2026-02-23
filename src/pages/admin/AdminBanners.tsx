@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Trash2, Upload, Image } from "lucide-react";
+import api from "../../api/axios";
 
 interface Banner {
   id: number;
@@ -24,14 +25,11 @@ export default function AdminBanners() {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const token = localStorage.getItem("token");
 
   const fetchBanners = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8001/api/admin/banners", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/admin/banners");
       setBanners(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -65,9 +63,7 @@ export default function AdminBanners() {
       formData.append("ctaText", form.ctaText);
       formData.append("ctaLink", form.ctaLink);
 
-      await axios.post("http://localhost:8001/api/admin/banners", formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.post("/admin/banners", formData);
 
       setForm({ title: "", subtitle: "", ctaText: "", ctaLink: "" });
       setImageFile(null);
@@ -83,9 +79,7 @@ export default function AdminBanners() {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this banner?")) return;
     try {
-      await axios.delete(`http://localhost:8001/api/admin/banners/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/admin/banners/${id}`);
       setBanners((prev) => prev.filter((b) => b.id !== id));
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed");
@@ -232,7 +226,7 @@ export default function AdminBanners() {
               >
                 <div className="h-20 w-36 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                   <img
-                    src={`http://localhost:8001/${banner.imagePath}`}
+                    src={`${import.meta.env.VITE_API_URL}/${banner.imagePath}`}
                     className="h-full w-full object-cover"
                     alt={banner.title}
                   />

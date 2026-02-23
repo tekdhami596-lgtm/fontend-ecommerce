@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CartItem {
-  id: number; // Cart row id from backend
+  id: number; 
   productId: number;
   quantity: number;
   title: string;
@@ -14,7 +14,7 @@ interface CartState {
   items: CartItem[];
 }
 
-// ── localStorage helpers ────────────────────────────────────────────────────
+
 function loadCart(): CartItem[] {
   try {
     const raw = localStorage.getItem("dokomart_cart");
@@ -28,11 +28,11 @@ function saveCart(items: CartItem[]) {
   try {
     localStorage.setItem("dokomart_cart", JSON.stringify(items));
   } catch {
-    // storage quota exceeded — fail silently
+   
   }
 }
 
-// ── Rehydrate from localStorage on app start ───────────────────────────────
+
 const initialState: CartState = { items: loadCart() };
 
 const cartSlice = createSlice({

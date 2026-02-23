@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Search, Trash2, Users } from "lucide-react";
+import api from "../../api/axios";
 
 interface User {
   id: number;
@@ -25,13 +26,11 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("all");
-  const token = localStorage.getItem("token");
 
   const fetchUsers = async (role: string = activeTab, q: string = search) => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8001/api/admin/users", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get("/admin/users", {
         params: { search: q, role: role === "all" ? undefined : role },
       });
       setUsers(res.data.data);
@@ -54,9 +53,7 @@ export default function AdminUsers() {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this user permanently?")) return;
     try {
-      await axios.delete(`http://localhost:8001/api/admin/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/admin/users/${id}`);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed");
@@ -75,7 +72,6 @@ export default function AdminUsers() {
     return users.filter((u) => u.role === tab).length;
   };
 
-  // When on "all" tab, group by role for separate tables
   const roles: Tab[] =
     activeTab === "all" ? ["admin", "seller", "buyer"] : [activeTab];
 
@@ -134,7 +130,6 @@ export default function AdminUsers() {
           ))}
         </div>
 
-        {/* Loading */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
@@ -145,7 +140,6 @@ export default function AdminUsers() {
               const roleUsers = getUsersByRole(role);
               return (
                 <div key={role}>
-                  {/* Section heading (only shown on "all" tab) */}
                   {activeTab === "all" && (
                     <div className="mb-3 flex items-center gap-3">
                       <span

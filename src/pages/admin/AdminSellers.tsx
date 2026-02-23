@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Trash2, Store } from "lucide-react";
+import api from "../../api/axios";
 
 interface Seller {
   id: number;
@@ -15,14 +16,11 @@ interface Seller {
 export default function AdminSellers() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
 
   const fetchSellers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8001/api/admin/sellers", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/admin/sellers");
       setSellers(res.data.data);
     } catch (err) {
       console.error(err);
@@ -38,9 +36,7 @@ export default function AdminSellers() {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Remove this seller from the platform?")) return;
     try {
-      await axios.delete(`http://localhost:8001/api/admin/sellers/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/admin/sellers/${id}`);
       setSellers((prev) => prev.filter((s) => s.id !== id));
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed");
