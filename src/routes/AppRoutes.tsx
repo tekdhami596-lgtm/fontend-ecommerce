@@ -26,6 +26,8 @@ import MyAccount from "../pages/Myaccount";
 import ContactUs from "../components/ContactUs";
 import EsewaSuccess from "../pages/EsewaSuccess";
 import EsewaFailure from "../pages/EsewaFailure";
+import TrackOrder from "../pages/TrackOrder";
+import CancelOrder from "../pages/CancelOrder";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +47,7 @@ export const router = createBrowserRouter([
         ],
       },
       { path: "contact-us", Component: ContactUs },
+      { path: "trackOrder", Component: TrackOrder },
 
       // ── Buyer (any authenticated user) ──────────────────────
       {
@@ -54,6 +57,7 @@ export const router = createBrowserRouter([
           { path: "checkout", Component: Checkout },
           { path: "order-success/:id", Component: orderSuccess },
           { path: "my-orders", Component: Orders },
+          { path: "orders/:id/cancel", Component: CancelOrder },
           { path: "my-account", Component: MyAccount },
           { path: "/esewa/success", Component: EsewaSuccess },
           { path: "/esewa/failure", Component: EsewaFailure },

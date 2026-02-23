@@ -55,10 +55,22 @@ const Footer = () => {
             </p>
             <div className="flex gap-3">
               {[
-                { icon: <Facebook size={18} />, href: "#" },
-                { icon: <Instagram size={18} />, href: "#" },
-                { icon: <Twitter size={18} />, href: "#" },
-                { icon: <Youtube size={18} />, href: "#" },
+                {
+                  icon: <Facebook size={18} />,
+                  href: "https://www.facebook.com/yourpage",
+                },
+                {
+                  icon: <Instagram size={18} />,
+                  href: "https://www.instagram.com/yourhandle",
+                },
+                {
+                  icon: <Twitter size={18} />,
+                  href: "https://www.twitter.com/yourhandle",
+                },
+                {
+                  icon: <Youtube size={18} />,
+                  href: "https://www.youtube.com/@yourchannel",
+                },
               ].map((social, i) => (
                 <a
                   key={i}
@@ -78,9 +90,9 @@ const Footer = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               {[
-                { label: "Track My Order", href: "/my-orders" },
+                { label: "Track My Order", href: "/trackOrder" },
                 { label: "Shipping Information", href: "#" },
-                { label: "Cancel Order", href: "#" },
+                { label: "Cancel Order", href: "orders/:id/cancel" },
                 { label: "FAQs", href: "/contact-us" },
                 { label: "Contact Us", href: "/contact-us" },
               ].map((link) => (

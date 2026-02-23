@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import orderApi from "../api/order.api";
 import notify from "../helpers/notify";
+import { Link } from "react-router-dom";
 
 interface OrderItem {
   id: number;
@@ -19,6 +20,7 @@ interface Order {
   paymentMode: string;
   createdAt: string;
   orderItems: OrderItem[];
+  orderStatus: string;
 }
 
 const statusColors: Record<string, string> = {
@@ -164,12 +166,27 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {/* Status badge */}
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase ${statusColors[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}
-                  >
-                    {order.paymentStatus}
-                  </span>
+                  <div className="flex gap-3">
+                    {/* Status badge */}
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase ${statusColors[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}
+                    >
+                      {order.paymentStatus}
+                      {/* Cancel button — only for pending/processing */}
+                    </span>
+                    <span>
+                      {["pending", "processing"].includes(
+                        order.paymentStatus,
+                      ) && (
+                        <Link
+                          to={`/orders/${order.id}/cancel`}
+                          className="rounded-xl border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold text-red-600 transition hover:bg-red-100"
+                        >
+                          Cancel
+                        </Link>
+                      )}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Order info grid */}
