@@ -215,7 +215,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Hero ── */}
       <div className="bg-gradient-to-r from-indigo-900 to-purple-700 px-4 py-12 text-center text-white sm:px-6 sm:py-16 md:py-20">
         <h1 className="mb-3 text-3xl font-bold sm:mb-4 sm:text-4xl md:text-5xl">
           Welcome to DokoMart
@@ -227,9 +226,7 @@ export default function HomePage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
-        {/* ── Categories + Sort ── */}
         <div className="mb-8">
-          {/* ── Line 1: Category pills ── */}
           <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
             <button
               onClick={() => handleCategorySelect(null)}
@@ -256,7 +253,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* ── Line 2: Product count (left) + Sort button (right) ── */}
           <div className="mt-3 flex items-center justify-between">
             <p className="text-xs text-gray-400">
               {!loading && totalCount > 0 && (
@@ -326,7 +322,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── Sub-categories strip ── */}
           {activeCategoryId &&
             (() => {
               const activeParent = topLevelCategories.find(
@@ -349,7 +344,6 @@ export default function HomePage() {
               );
             })()}
 
-          {/* ── Active filter chips ── */}
           {(activeCategoryId || activeSort !== "default") && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-xs text-gray-400">Active filters:</span>
@@ -379,7 +373,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* ── Products Grid ── */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
@@ -404,7 +397,7 @@ export default function HomePage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <div className=" grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {products.map((product) => (
                 <div
                   key={product.id}

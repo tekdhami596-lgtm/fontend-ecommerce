@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/slice/userSlice";
 import api from "../api/axios";
 import { Eye, EyeOff } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -30,7 +31,6 @@ const Login = () => {
       const { data } = await api.post("/auth/login", formData);
 
       dispatch(login(data.user));
-  
 
       // Role-based redirect
       if (data.user.role === "seller") {
@@ -105,10 +105,12 @@ const Login = () => {
           </div>
         </div>
 
-        <p className="cursor-pointer text-right text-sm text-gray-500 hover:underline">
+        <Link
+          to="/forgot-password"
+          className="cursor-pointer text-right text-sm text-gray-500 hover:underline"
+        >
           Forgot your password?
-        </p>
-
+        </Link>
         <button
           type="submit"
           disabled={loading}

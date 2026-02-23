@@ -28,6 +28,8 @@ import EsewaSuccess from "../pages/EsewaSuccess";
 import EsewaFailure from "../pages/EsewaFailure";
 import TrackOrder from "../pages/TrackOrder";
 import CancelOrder from "../pages/CancelOrder";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +41,9 @@ export const router = createBrowserRouter([
       { path: "login", Component: Login },
       { path: "signup", Component: Signup },
       { path: "aboutUs", Component: AboutUs },
+      { path: "forgot-password", Component: ForgotPassword },
+      { path: "reset-password/:token", Component: ResetPassword },
+
       {
         path: "products",
         children: [

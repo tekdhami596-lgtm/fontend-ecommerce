@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
 import { logoutUser } from "../redux/slice/userSlice";
-import doko from "../../public/Doko-logo.png";
+import doko from "../assets/Doko-logo.png";
 
 /* ─── Styles injected once ─────────────────────────────────────────────── */
 const navStyles = `
