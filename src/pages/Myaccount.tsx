@@ -15,7 +15,6 @@ import {
   Lock,
   LogOut,
   ChevronRight,
-  Package,
   Pencil,
   
   Eye,

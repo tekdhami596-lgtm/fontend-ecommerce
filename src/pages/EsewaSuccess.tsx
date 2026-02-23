@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../redux/slice/cartSlice";
 import api from "../api/axios";
