@@ -1,6 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/axios";
-import { AppDispatch } from "../store";
 
 export type UserRole = "buyer" | "seller" | "admin";
 export type Gender = "male" | "female" | "other";
@@ -25,6 +24,11 @@ interface UserState {
 
 const initialState: UserState = { data: null };
 
+// ── Logout thunk ──────────────────────────────────────────────────────────────
+export const logoutUser = createAsyncThunk("user/logout", async () => {
+  await api.post("/auth/logout");
+});
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -32,27 +36,22 @@ export const userSlice = createSlice({
     login: (state, action: PayloadAction<User>) => {
       state.data = action.payload;
     },
-    logout: (state) => {
-      state.data = null;
-    
-    },
     updateProfile: (state, action: PayloadAction<Partial<User>>) => {
       if (state.data) state.data = { ...state.data, ...action.payload };
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(logoutUser.fulfilled, (state) => {
+      state.data = null;
+    });
+    builder.addCase(logoutUser.rejected, (state) => {
+      state.data = null; // clear state even if API fails
+    });
+  },
 });
 
-export const { login, logout, updateProfile } = userSlice.actions;
+export const { login, updateProfile } = userSlice.actions;
 export default userSlice.reducer;
-
-// ── Logout thunk — clears cookie on backend then clears Redux state ──────────
-export const logoutUser = () => async (dispatch: AppDispatch) => {
-  try {
-    await api.post("/auth/logout");
-  } finally {
-    dispatch(logout());
-  }
-};
 
 // ── Selectors ────────────────────────────────────────────────────────────────
 export const selectUser = (state: { user: UserState }) => state.user.data;

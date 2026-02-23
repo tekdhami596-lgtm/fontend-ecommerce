@@ -16,7 +16,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
-import { logout } from "../redux/slice/userSlice";
+import { logoutUser } from "../redux/slice/userSlice";
 import doko from "../../public/Doko-logo.png";
 
 /* ─── Styles injected once ─────────────────────────────────────────────── */
@@ -263,7 +263,7 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
     setUserOpen(false);
     navigate("/login");
   };

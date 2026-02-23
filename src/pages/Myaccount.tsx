@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout, updateProfile, selectUser } from "../redux/slice/userSlice";
+import {
+  logoutUser,
+  updateProfile,
+  selectUser,
+} from "../redux/slice/userSlice";
 import api from "../api/axios";
 import notify from "../helpers/notify";
 import {
@@ -19,6 +23,7 @@ import {
   Bell,
 } from "lucide-react";
 import Orders from "./Orders";
+import { AppDispatch } from "../redux/store";
 
 // ── Types ──────────────────────────────────────────────
 type Tab = "profile" | "orders" | "addresses" | "password" | "notifications";
@@ -31,7 +36,7 @@ const getInitials = (firstName?: string, lastName?: string) => {
 
 // ── ProfileSection ─────────────────────────────────────
 const ProfileSection = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const reduxUser = useSelector(selectUser);
 
   const [editing, setEditing] = useState(false);
@@ -504,13 +509,13 @@ const NotificationsSection = () => {
 
 // ── Main Page ──────────────────────────────────────────
 const MyAccount = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const reduxUser = useSelector(selectUser);
   const [activeTab, setActiveTab] = useState<Tab>("profile");
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
     navigate("/login");
   };
 
