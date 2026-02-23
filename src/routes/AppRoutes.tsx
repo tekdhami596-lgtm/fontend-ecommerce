@@ -30,6 +30,7 @@ import TrackOrder from "../pages/TrackOrder";
 import CancelOrder from "../pages/CancelOrder";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import AdminBanners from "../pages/admin/AdminBanners";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +92,8 @@ export const router = createBrowserRouter([
           { path: "sellers", Component: AdminSellers },
           { path: "products", Component: AdminProducts },
           { path: "orders", Component: AdminOrders },
+          { path: "banners", Component: AdminBanners },
+
           {
             path: "categories",
             element: <ManageCategories viewMode="admin" />,

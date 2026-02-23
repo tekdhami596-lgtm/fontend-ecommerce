@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import CategoryCheckboxes from "../../components/CategoryCheckboxes";
 import notify from "../../helpers/notify";
 import api from "../../api/axios";
+import getImageUrl from "../../helpers/imageUrl";
 
 interface ImageType {
   id: number;
@@ -216,7 +216,7 @@ function EditSellerProduct() {
             {existingImages.map((img) => (
               <div key={img.id} className="relative">
                 <img
-                  src={`${import.meta.env.VITE_API_URL}/${img.path}`}
+                  src={getImageUrl(img.path)}
                   className="h-28 w-28 rounded-lg object-cover shadow"
                   alt="product"
                 />

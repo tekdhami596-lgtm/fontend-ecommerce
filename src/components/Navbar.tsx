@@ -126,6 +126,7 @@ const navLinks: Record<NonNullable<Role>, { to: string; label: string }[]> = {
     { to: "/admin/users", label: "Users" },
     { to: "/admin/products", label: "Products" },
     { to: "/admin/categories", label: "Categories" },
+    { to: "/admin/banners", label: "Banners" },
   ],
   seller: [
     { to: "/seller/dashboard", label: "Dashboard" },
@@ -287,7 +288,6 @@ export default function Navbar() {
 
       <nav className="nav-root nav-bg sticky top-0 z-50 border-b border-white/5">
         <div className="relative mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-          {/* ── Logo ── */}
           <NavLink
             to="/"
             className="logo-wrap mr-2 flex shrink-0 items-center gap-2.5"
@@ -303,7 +303,6 @@ export default function Navbar() {
             </span>
           </NavLink>
 
-          {/* ── Desktop Nav Links ── */}
           <div className="hidden items-center gap-0.5 md:flex">
             {links.map((link) => (
               <NavLink
@@ -319,7 +318,6 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Categories */}
             <div className="relative" ref={categoryRef}>
               <button
                 onClick={() => setCategoryOpen(!categoryOpen)}

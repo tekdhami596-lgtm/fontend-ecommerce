@@ -16,6 +16,7 @@ import {
   FileText,
   CreditCard,
 } from "lucide-react";
+import getImageUrl from "../helpers/imageUrl";
 
 interface CartItem {
   id: number;
@@ -236,7 +237,7 @@ export default function Checkout() {
                     <img
                       src={
                         el.product.images?.[0]?.path
-                          ? `${import.meta.env.VITE_API_URL}/${el.product.images[0].path}`
+                          ? getImageUrl(el.product.images[0].path)
                           : NoImage
                       }
                       alt={el.product.title}

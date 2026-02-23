@@ -7,6 +7,7 @@ import cartApi from "../api/cart.api";
 import NoImage from "../assets/NoImage.png";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import getImageUrl from "../helpers/imageUrl";
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function Cart() {
     const fetchCart = async () => {
       try {
         const res = await cartApi.get();
-      
+
         const items = res.data.data.map((c: any) => ({
           id: c.id,
           productId: c.product.id,
@@ -95,11 +96,7 @@ export default function Cart() {
               <div className="flex items-center gap-4">
                 <div>
                   <img
-                    src={
-                      item.image
-                        ? `${import.meta.env.VITE_API_URL}/${item.image}`
-                        : NoImage
-                    }
+                    src={item.image ? getImageUrl(item.image) : NoImage}
                     alt={item.title}
                     className="h-16 w-16 rounded border object-cover"
                   />

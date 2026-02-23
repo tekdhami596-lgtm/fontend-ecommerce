@@ -7,6 +7,7 @@ import notify from "../helpers/notify";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
 import { RootState } from "../redux/store";
+import getImageUrl from "../helpers/imageUrl";
 
 type ProductImage = { path: string };
 
@@ -102,8 +103,7 @@ const ProductDetailPage: React.FC = () => {
   if (loading) return <p className="mt-20 text-center">Loading...</p>;
   if (!product) return <p className="mt-20 text-center">Product not found</p>;
 
-  const imgUrl = (path: string) =>
-    path.startsWith("http") ? path : `${import.meta.env.VITE_API_URL}/${path}`;
+ 
 
   return (
     <div className="mx-auto max-w-6xl p-4">
@@ -111,7 +111,7 @@ const ProductDetailPage: React.FC = () => {
         {/* Left: Images */}
         <div className="md:w-1/2">
           <img
-            src={imgUrl(mainImage)}
+            src={getImageUrl(mainImage)}
             alt={product.title}
             className="object-fit h-[400px] w-full rounded border"
           />
@@ -119,7 +119,7 @@ const ProductDetailPage: React.FC = () => {
             {product.images.map((img, idx) => (
               <img
                 key={idx}
-                src={imgUrl(img.path)}
+                src={getImageUrl(img.path)}
                 alt={`Thumbnail ${idx}`}
                 onClick={() => setMainImage(img.path)}
                 className={`h-20 w-20 cursor-pointer rounded border object-contain ${

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import notify from "../../helpers/notify";
 import api from "../../api/axios";
+import getImageUrl from "../../helpers/imageUrl";
 
 type ProductImageType = {
   path: string;
@@ -137,7 +138,7 @@ function SellerProduct() {
                 <div className="relative h-40 overflow-hidden rounded-t-xl bg-gray-200 sm:h-44 md:h-48">
                   {product.images?.length > 0 ? (
                     <img
-                      src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                      src={getImageUrl(product.images[0].path)}
                       alt={product.title}
                       className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
                     />

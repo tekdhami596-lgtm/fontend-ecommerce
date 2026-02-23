@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Trash2, Upload, Image } from "lucide-react";
 import api from "../../api/axios";
+import getImageUrl from "../../helpers/imageUrl";
 
 interface Banner {
   id: number;
@@ -226,7 +226,7 @@ export default function AdminBanners() {
               >
                 <div className="h-20 w-36 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/${banner.imagePath}`}
+                    src={getImageUrl(banner.imagePath)}
                     className="h-full w-full object-cover"
                     alt={banner.title}
                   />

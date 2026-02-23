@@ -10,6 +10,7 @@ import {
   Plus,
   List,
 } from "lucide-react";
+import getImageUrl from "../../helpers/imageUrl";
 
 type LowStockProduct = {
   id: number;
@@ -267,7 +268,7 @@ function SellerDashboard() {
                       <div className="h-10 w-10 overflow-hidden rounded-lg bg-gray-100">
                         {product.images?.[0] ? (
                           <img
-                            src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                            src={getImageUrl(product.images[0].path)}
                             alt={product.title}
                             className="h-full w-full object-cover"
                           />
@@ -330,7 +331,7 @@ function SellerDashboard() {
                       <div className="h-10 w-10 overflow-hidden rounded-lg bg-gray-100">
                         {item.product?.images?.[0] ? (
                           <img
-                            src={`${import.meta.env.VITE_API_URL}/${item.product.images[0].path}`}
+                            src={getImageUrl(item.product.images[0].path)}
                             alt={item.product.title}
                             className="h-full w-full object-cover"
                           />

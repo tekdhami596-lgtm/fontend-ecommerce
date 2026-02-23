@@ -14,6 +14,8 @@ import {
   Loader2,
 } from "lucide-react";
 import notify from "../helpers/notify";
+import getImageUrl from "../helpers/imageUrl";
+import BannerCarousel from "../components/BannerCarousel";
 
 type ProductImageType = { path: string };
 type Product = {
@@ -215,14 +217,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-indigo-900 to-purple-700 px-4 py-12 text-center text-white sm:px-6 sm:py-16 md:py-20">
-        <h1 className="mb-3 text-3xl font-bold sm:mb-4 sm:text-4xl md:text-5xl">
-          Welcome to DokoMart
-        </h1>
-        <p className="mx-auto max-w-xl text-base text-indigo-200 sm:text-lg">
-          Discover products you'll love — curated by sellers, organized by
-          categories.
-        </p>
+      {/* Hero Banner */}
+      <div className="mx-auto max-w-7xl px-3 pt-6 sm:px-6">
+        <BannerCarousel />
       </div>
 
       <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
@@ -397,7 +394,7 @@ export default function HomePage() {
           </div>
         ) : (
           <>
-            <div className=" grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {products.map((product) => (
                 <div
                   key={product.id}
@@ -410,7 +407,7 @@ export default function HomePage() {
                     <div className="relative h-40 w-full overflow-hidden bg-gray-100 sm:h-44">
                       {product.images?.length > 0 ? (
                         <img
-                          src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                          src={getImageUrl(product.images[0].path)}
                           alt={product.title}
                           className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
                         />

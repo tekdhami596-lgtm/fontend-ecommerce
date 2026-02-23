@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Search, Package } from "lucide-react";
 import notify from "../../helpers/notify";
 import api from "../../api/axios";
+import getImageUrl from "../../helpers/imageUrl";
 
 interface Product {
   id: number;
@@ -105,7 +106,7 @@ export default function AdminProducts() {
                     <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                       {product.images?.[0] ? (
                         <img
-                          src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                          src={getImageUrl(product.images[0].path)}
                           className="h-full w-full object-cover"
                           alt={product.title}
                         />
@@ -194,7 +195,7 @@ export default function AdminProducts() {
                             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                               {product.images?.[0] ? (
                                 <img
-                                  src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                                  src={getImageUrl(product.images[0].path)}
                                   className="h-full w-full object-cover"
                                   alt={product.title}
                                 />
