@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
@@ -101,20 +101,29 @@ export default function HomePage() {
       : null,
   );
 
-  const flatCategories = flattenTree(categoryTree);
-  const topLevelCategories = categoryTree ?? [];
+  // ✅ Memoized so they don't cause infinite re-renders
+  const flatCategories = useMemo(
+    () => flattenTree(categoryTree),
+    [categoryTree],
+  );
+  const topLevelCategories = useMemo(() => categoryTree ?? [], [categoryTree]);
+
   const hasMore = products.length < totalCount;
 
+  // ✅ Fetch categories only once on mount
   useEffect(() => {
-    if (!categoryTree || categoryTree.length === 0)
+    if (!categoryTree || categoryTree.length === 0) {
       dispatch(fetchCategoryTree());
+    }
   }, []);
 
+  // ✅ Sync activeCategoryId from URL
   useEffect(() => {
     const id = searchParams.get("categoryId");
     setActiveCategoryId(id ? Number(id) : null);
   }, [searchParams]);
 
+  // ✅ flatCategories.length as dependency so it re-runs after categories load
   useEffect(() => {
     if (activeCategoryId && flatCategories.length === 0) return;
     setProducts([]);
@@ -123,6 +132,7 @@ export default function HomePage() {
     doFetch(1, true);
   }, [activeCategoryId, activeSort, flatCategories.length]);
 
+  // ✅ Close sort dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest("#home-sort-dropdown"))
