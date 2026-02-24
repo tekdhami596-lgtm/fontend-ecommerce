@@ -108,7 +108,7 @@ export default function HomePage() {
   useEffect(() => {
     if (!categoryTree || categoryTree.length === 0)
       dispatch(fetchCategoryTree());
-  }, [categoryTree]);
+  }, []);
 
   useEffect(() => {
     const id = searchParams.get("categoryId");
@@ -121,7 +121,7 @@ export default function HomePage() {
     setPage(1);
     setTotalCount(0);
     doFetch(1, true);
-  }, [activeCategoryId, activeSort]);
+  }, [activeCategoryId, activeSort, flatCategories.length]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
