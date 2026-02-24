@@ -13,13 +13,11 @@ function App() {
 
   useEffect(() => {
     api
-      .get("/auth/me")
+      .get("/auth/me", { withCredentials: true })
       .then((res) => {
         dispatch(login(res.data.data));
       })
-      .catch(() => {
-     
-      })
+      .catch(() => {})
       .finally(() => {
         setIsLoading(false);
       });
