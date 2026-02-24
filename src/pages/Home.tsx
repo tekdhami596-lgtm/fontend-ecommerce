@@ -46,10 +46,11 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 const PAGE_LIMIT = 10;
 
 function flattenTree(
-  nodes: CategoryTree[],
+  nodes: CategoryTree[] = [],
 ): { id: number; title: string; parentId?: number }[] {
   const result: { id: number; title: string; parentId?: number }[] = [];
   const traverse = (items: CategoryTree[], parentId?: number) => {
+    if (!items || !Array.isArray(items)) return;
     items.forEach((item) => {
       result.push({ id: item.id, title: item.title, parentId });
       if (item.childrens?.length) traverse(item.childrens, item.id);
@@ -61,7 +62,7 @@ function flattenTree(
 
 function getAllDescendantIds(
   categoryId: number,
-  allCategories: { id: number; parentId?: number }[],
+  allCategories: { id: number; parentId?: number }[] = [],
 ): number[] {
   const ids: number[] = [categoryId];
   const findChildren = (parentId: number) => {
@@ -83,7 +84,7 @@ export default function HomePage() {
   const user = useSelector((state: RootState) => state.user.data);
 
   const isSeller = user?.role === "seller";
-  const { tree: categoryTree } = useSelector(
+  const { tree: categoryTree = [] } = useSelector(
     (state: RootState) => state.categories,
   );
 
@@ -101,12 +102,13 @@ export default function HomePage() {
   );
 
   const flatCategories = flattenTree(categoryTree);
-  const topLevelCategories = categoryTree;
+  const topLevelCategories = categoryTree ?? [];
   const hasMore = products.length < totalCount;
 
   useEffect(() => {
-    if (categoryTree.length === 0) dispatch(fetchCategoryTree());
-  }, []);
+    if (!categoryTree || categoryTree.length === 0)
+      dispatch(fetchCategoryTree());
+  }, [categoryTree]);
 
   useEffect(() => {
     const id = searchParams.get("categoryId");
@@ -119,7 +121,7 @@ export default function HomePage() {
     setPage(1);
     setTotalCount(0);
     doFetch(1, true);
-  }, [activeCategoryId, activeSort, categoryTree]);
+  }, [activeCategoryId, activeSort]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -209,6 +211,7 @@ export default function HomePage() {
       notify.error("Failed to add to cart");
     }
   };
+
   const activeCategoryName = flatCategories.find(
     (c) => c.id === activeCategoryId,
   )?.title;
@@ -222,15 +225,16 @@ export default function HomePage() {
         <BannerCarousel />
       </div>
 
-      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
-        <div className="mb-8">
-          <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
+      {/* Category Filter Bar */}
+      <div className="sticky top-0 z-20 bg-white shadow-sm">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
+          <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto py-3">
             <button
               onClick={() => handleCategorySelect(null)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+              className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeCategoryId === null
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "border border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
+                  ? "bg-gray-900 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
               All
@@ -239,158 +243,76 @@ export default function HomePage() {
               <button
                 key={cat.id}
                 onClick={() => handleCategorySelect(cat.id)}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                   activeCategoryId === cat.id
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "border border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {cat.title}
               </button>
             ))}
           </div>
+        </div>
+      </div>
 
-          <div className="mt-3 flex items-center justify-between">
-            <p className="text-xs text-gray-400">
-              {!loading && totalCount > 0 && (
-                <>
-                  <span className="font-semibold text-gray-600">
-                    {products.length}
-                  </span>
-                  {" of "}
-                  <span className="font-semibold text-gray-600">
-                    {totalCount}
-                  </span>
-                  {" product"}
-                  {totalCount !== 1 ? "s" : ""}
-                </>
-              )}
-            </p>
-
-            <div id="home-sort-dropdown" className="relative">
-              <button
-                onClick={() => setSortOpen((v) => !v)}
-                className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all ${
-                  activeSort !== "default"
-                    ? "border-indigo-400 bg-indigo-600 text-white shadow-sm"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
-                }`}
-              >
-                <ArrowUpDown size={14} />
-                <span>
-                  {activeSort !== "default" ? activeSortLabel : "Sort by"}
-                </span>
-                <ChevronDown
-                  size={13}
-                  className={`transition-transform duration-200 ${sortOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {sortOpen && (
-                <div className="absolute top-11 right-0 z-30 w-52 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl ring-1 ring-black/5">
-                  <div className="flex items-center gap-1.5 border-b border-gray-50 px-3 py-2.5">
-                    <SlidersHorizontal size={11} className="text-gray-400" />
-                    <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                      Sort by
-                    </span>
-                  </div>
-                  <div className="p-1.5">
-                    {SORT_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => handleSortChange(opt.value)}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm transition-all ${
-                          activeSort === opt.value
-                            ? "bg-indigo-50 font-semibold text-indigo-600"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        {opt.label}
-                        {activeSort === opt.value && (
-                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[9px] text-white">
-                            ✓
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+      {/* Toolbar: heading + sort */}
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {activeCategoryName ? activeCategoryName : "All Products"}
+            </h2>
+            {!loading && (
+              <p className="text-sm text-gray-500">{totalCount} items</p>
+            )}
           </div>
 
-          {activeCategoryId &&
-            (() => {
-              const activeParent = topLevelCategories.find(
-                (c) => c.id === activeCategoryId,
-              );
-              const children = activeParent?.childrens ?? [];
-              if (children.length === 0) return null;
-              return (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {children.map((child) => (
-                    <button
-                      key={child.id}
-                      onClick={() => handleCategorySelect(child.id)}
-                      className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-600 transition hover:bg-indigo-100"
-                    >
-                      {child.title}
-                    </button>
-                  ))}
-                </div>
-              );
-            })()}
-
-          {(activeCategoryId || activeSort !== "default") && (
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-gray-400">Active filters:</span>
-              {activeCategoryId && (
-                <span className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
-                  {activeCategoryName}
+          {/* Sort Dropdown */}
+          <div className="relative" id="home-sort-dropdown">
+            <button
+              onClick={() => setSortOpen((o) => !o)}
+              className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            >
+              <ArrowUpDown size={15} />
+              {activeSortLabel}
+              <ChevronDown
+                size={14}
+                className={`transition-transform ${sortOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {sortOpen && (
+              <div className="absolute right-0 z-30 mt-1 w-48 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
+                {SORT_OPTIONS.map((opt) => (
                   <button
-                    onClick={() => handleCategorySelect(null)}
-                    className="text-indigo-400 transition-colors hover:text-red-500"
+                    key={opt.value}
+                    onClick={() => handleSortChange(opt.value)}
+                    className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50 ${
+                      activeSort === opt.value
+                        ? "font-semibold text-gray-900"
+                        : "text-gray-600"
+                    }`}
                   >
-                    ✕
+                    {opt.label}
                   </button>
-                </span>
-              )}
-              {activeSort !== "default" && (
-                <span className="flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-600">
-                  {activeSortLabel}
-                  <button
-                    onClick={() => handleSortChange("default")}
-                    className="text-violet-400 transition-colors hover:text-red-500"
-                  >
-                    ✕
-                  </button>
-                </span>
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+      </div>
 
+      {/* Products Grid */}
+      <div className="mx-auto max-w-7xl px-3 pb-10 sm:px-6">
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="animate-spin text-gray-400" size={36} />
           </div>
         ) : products.length === 0 ? (
-          <div className="rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20">
-            <p className="mb-4 text-4xl">🛍️</p>
-            <p className="text-lg font-semibold text-gray-500 sm:text-xl">
-              No products found
-            </p>
-            <p className="mt-1 text-sm text-gray-400">
-              Try a different category
-            </p>
-            {activeCategoryId && (
-              <button
-                onClick={() => handleCategorySelect(null)}
-                className="mt-5 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-              >
-                View all products
-              </button>
-            )}
+          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
+            <SlidersHorizontal size={40} className="mb-3 opacity-40" />
+            <p className="text-lg font-medium">No products found</p>
+            <p className="text-sm">Try adjusting your filters</p>
           </div>
         ) : (
           <>
@@ -398,30 +320,25 @@ export default function HomePage() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md"
                 >
-                  <Link
-                    to={`/products/${product.id}`}
-                    className="block shrink-0"
-                  >
-                    <div className="relative h-40 w-full overflow-hidden bg-gray-100 sm:h-44">
-                      {product.images?.length > 0 ? (
+                  {/* Product Image */}
+                  <Link to={`/products/${product.id}`} className="block">
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      {product.images?.[0]?.path ? (
                         <img
                           src={getImageUrl(product.images[0].path)}
                           alt={product.title}
-                          className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full flex-col items-center justify-center gap-1 bg-gray-50">
-                          <span className="text-2xl">📦</span>
-                          <span className="text-xs text-gray-300">
-                            No image
-                          </span>
+                        <div className="flex h-full w-full items-center justify-center text-gray-300">
+                          <span className="text-4xl">🛍️</span>
                         </div>
                       )}
                       {product.stock === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-gray-700">
+                          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-700">
                             Out of Stock
                           </span>
                         </div>
@@ -429,49 +346,29 @@ export default function HomePage() {
                     </div>
                   </Link>
 
-                  <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3">
-                    <div className="space-y-1">
-                      {product.categories?.length > 0 && (
-                        <button
-                          onClick={() =>
-                            handleCategorySelect(product.categories[0].id)
-                          }
-                          className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-500 hover:bg-indigo-100"
-                        >
-                          {product.categories[0].title}
-                        </button>
-                      )}
-                      <Link to={`/products/${product.id}`}>
-                        <h3 className="line-clamp-2 text-xs leading-snug font-semibold text-gray-800 hover:text-indigo-600 sm:text-sm">
-                          {product.title}
-                        </h3>
-                      </Link>
-                    </div>
-
-                    <div className="mt-2 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-bold text-indigo-600 sm:text-base">
-                          ${product.price}
-                        </span>
-                        {product.stock > 0 && product.stock <= 5 && (
-                          <span className="text-xs font-medium text-orange-500">
-                            Only {product.stock} left
-                          </span>
-                        )}
-                      </div>
+                  {/* Product Info */}
+                  <div className="flex flex-1 flex-col p-3">
+                    <Link to={`/products/${product.id}`}>
+                      <h3 className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-gray-600">
+                        {product.title}
+                      </h3>
+                    </Link>
+                    {product.shortDescription && (
+                      <p className="mt-0.5 line-clamp-1 text-xs text-gray-400">
+                        {product.shortDescription}
+                      </p>
+                    )}
+                    <div className="mt-auto flex items-center justify-between pt-2">
+                      <span className="text-sm font-bold text-gray-900">
+                        ${Number(product.price).toFixed(2)}
+                      </span>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product);
-                        }}
+                        onClick={() => handleAddToCart(product)}
                         disabled={product.stock === 0}
-                        className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40 sm:py-2 sm:text-sm"
+                        className="flex items-center gap-1 rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <IoCartOutline size={15} />
-                        <span>
-                          {" "}
-                          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-                        </span>
+                        <IoCartOutline size={14} />
+                        Add
                       </button>
                     </div>
                   </div>
@@ -479,32 +376,24 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* ── Load More ── */}
-            {hasMore ? (
-              <div className="mt-10 flex flex-col items-center gap-2">
+            {/* Load More */}
+            {hasMore && (
+              <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleLoadMore}
                   disabled={loadingMore}
-                  className="flex min-w-[180px] items-center justify-center gap-2 rounded-2xl border-2 border-indigo-600 bg-white px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-600 hover:text-white disabled:opacity-60"
+                  className="flex items-center gap-2 rounded-lg bg-gray-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700 disabled:opacity-60"
                 >
                   {loadingMore ? (
                     <>
-                      <Loader2 size={16} className="animate-spin" /> Loading…
+                      <Loader2 size={15} className="animate-spin" />
+                      Loading...
                     </>
                   ) : (
                     "Load More"
                   )}
                 </button>
-                <p className="text-xs text-gray-400">
-                  {products.length} of {totalCount} products shown
-                </p>
               </div>
-            ) : (
-              products.length > PAGE_LIMIT && (
-                <p className="mt-8 text-center text-xs text-gray-400">
-                  ✓ All {totalCount} products loaded
-                </p>
-              )
             )}
           </>
         )}

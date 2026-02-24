@@ -7,6 +7,7 @@ import { RootState } from "../redux/store";
 import cartApi from "../api/cart.api";
 import notify from "../helpers/notify";
 import api from "../api/axios";
+import getImageUrl from "../helpers/imageUrl";
 import {
   ArrowUpDown,
   ChevronDown,
@@ -320,7 +321,7 @@ function Products() {
             >
               {product.images?.length > 0 ? (
                 <img
-                  src={`${import.meta.env.VITE_API_URL}/${product.images[0].path}`}
+                  src={getImageUrl(product.images[0].path)}
                   alt={product.title}
                   className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
                 />

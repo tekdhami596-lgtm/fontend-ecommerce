@@ -251,12 +251,6 @@ export default function CancelOrder() {
           </div>
           <div className="flex flex-col gap-3 px-8 py-6">
             <Link
-              to={`/orders/${order.id}`}
-              className="w-full rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-700"
-            >
-              View Order Details
-            </Link>
-            <Link
               to="/my-orders"
               className="w-full rounded-xl border border-slate-200 py-3 text-center text-sm font-semibold text-slate-500 hover:bg-slate-50"
             >
