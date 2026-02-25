@@ -10,14 +10,12 @@ import {
   ShieldCheck,
   RotateCcw,
   Truck,
-
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300">
-      
       <div className="border-b border-gray-700 bg-gray-800">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm">

@@ -27,7 +27,6 @@ import ContactUs from "../components/ContactUs";
 import EsewaSuccess from "../pages/EsewaSuccess";
 import EsewaFailure from "../pages/EsewaFailure";
 import TrackOrder from "../pages/TrackOrder";
-import CancelOrder from "../pages/CancelOrder";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import AdminBanners from "../pages/admin/AdminBanners";
@@ -63,7 +62,6 @@ export const router = createBrowserRouter([
           { path: "checkout", Component: Checkout },
           { path: "order-success/:id", Component: orderSuccess },
           { path: "my-orders", Component: Orders },
-          { path: "orders/:id/cancel", Component: CancelOrder },
           { path: "my-account", Component: MyAccount },
           { path: "/esewa/success", Component: EsewaSuccess },
           { path: "/esewa/failure", Component: EsewaFailure },
