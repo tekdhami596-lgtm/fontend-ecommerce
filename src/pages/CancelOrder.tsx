@@ -89,7 +89,6 @@ export default function CancelOrder() {
     order?.orderItems.reduce((s, i) => s + i.price * i.quantity, 0) ?? 0;
   const canCancel = order && CANCELLABLE.includes(order.orderStatus);
 
-  // ── Loading ──────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
@@ -101,7 +100,6 @@ export default function CancelOrder() {
     );
   }
 
-  // ── Fetch Error ──────────────────────────────────────────────────────────────
   if (fetchError || !order) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-slate-50 px-4">
@@ -133,7 +131,6 @@ export default function CancelOrder() {
     );
   }
 
-  // ── Success State ────────────────────────────────────────────────────────────
   if (cancelled) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-white px-4">
@@ -204,7 +201,6 @@ export default function CancelOrder() {
     );
   }
 
-  // ── Already Cancelled / Cannot Cancel ────────────────────────────────────────
   if (!canCancel) {
     const statusMessages: Partial<
       Record<OrderStatus, { title: string; desc: string }>
@@ -262,7 +258,6 @@ export default function CancelOrder() {
     );
   }
 
-  // ── Main Cancel Form ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-10">
       <div className="mx-auto max-w-lg animate-[fadeIn_0.35s_ease-out] space-y-5">
@@ -287,7 +282,6 @@ export default function CancelOrder() {
           Back
         </button>
 
-        {/* Header */}
         <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-6 py-6 text-white shadow-lg">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/15">
@@ -322,7 +316,6 @@ export default function CancelOrder() {
           </div>
         </div>
 
-        {/* Order Summary */}
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 bg-slate-50 px-6 py-4">
             <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase">
@@ -357,7 +350,6 @@ export default function CancelOrder() {
           </div>
         </div>
 
-        {/* Delivery Info */}
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 bg-slate-50 px-6 py-4">
             <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase">
@@ -395,7 +387,6 @@ export default function CancelOrder() {
           </div>
         </div>
 
-        {/* Reason Selector */}
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 bg-slate-50 px-6 py-4">
             <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase">
@@ -425,7 +416,6 @@ export default function CancelOrder() {
           </div>
         </div>
 
-        {/* Warning Notice */}
         <div className="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
           <svg
             className="mt-0.5 h-5 w-5 shrink-0 text-amber-500"
@@ -452,7 +442,6 @@ export default function CancelOrder() {
           </div>
         </div>
 
-        {/* Error */}
         {cancelError && (
           <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             <svg
@@ -472,7 +461,6 @@ export default function CancelOrder() {
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex flex-col gap-3 pb-8">
           <button
             onClick={handleCancel}

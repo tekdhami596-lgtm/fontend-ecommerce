@@ -12,12 +12,15 @@ const orderApi = {
     return api.get("/orders/my-orders");
   },
   getById: (id: number) => {
-    api.get(`/orders/${id}`);
+    return api.get(`/orders/${id}`);
   },
 
   create: (payload: OrderPayload) => {
-    console.log({ payload });
     return api.post("/orders", payload);
+  },
+
+  cancel: (id: number) => {
+    return api.patch(`/orders/${id}/cancel`);
   },
 };
 
