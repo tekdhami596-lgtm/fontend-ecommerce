@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import orderApi from "../api/order.api";
 import notify from "../helpers/notify";
-import { Link } from "react-router-dom";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -28,6 +28,7 @@ const statusColors: Record<string, string> = {
   done: "bg-green-100 text-green-700",
   failed: "bg-red-100 text-red-700",
   refund: "bg-purple-100 text-purple-700",
+  cancelled: "bg-gray-100 text-gray-500",
 };
 
 const paymentModeLabel: Record<string, string> = {
@@ -40,12 +41,14 @@ export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
+  const [loadingCancelId, setLoadingCancelId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
       const res = await orderApi.getAll();
-      console.log("response:", res);
       setOrders(res.data.data);
     } catch {
       notify.error("Failed to load orders");
@@ -62,13 +65,81 @@ export default function Orders() {
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
-  // ── Loading state ──────────────────────────────────────────
+  // ── Cancel ─────────────────────────────────────────────────
+  const handleCancelClick = (id: number) => setCancellingId(id);
+  const handleCancelDismiss = () => setCancellingId(null);
+
+  const handleCancelConfirm = async (id: number) => {
+    setLoadingCancelId(id);
+    try {
+      await orderApi.cancel(id);
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === id ? { ...o, paymentStatus: "cancelled" } : o,
+        ),
+      );
+      notify.success("Order cancelled successfully");
+    } catch {
+      notify.error("Failed to cancel order");
+    } finally {
+      setLoadingCancelId(null);
+      setCancellingId(null);
+    }
+  };
+
+  // ── Delete ─────────────────────────────────────────────────
+  const handleDelete = async (id: number) => {
+    setDeletingId(id);
+    try {
+      await orderApi.delete(id);
+      setOrders((prev) => prev.filter((o) => o.id !== id));
+      notify.success("Order deleted");
+    } catch {
+      notify.error("Failed to delete order");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // ── Loading skeleton ───────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-green-500 border-t-transparent" />
-          <p className="text-sm font-medium text-gray-500">Loading orders...</p>
+      <div className="min-h-screen bg-gray-50 px-4 py-10">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <div className="h-7 w-36 animate-pulse rounded-lg bg-gray-200" />
+            <div className="mt-2 h-4 w-24 animate-pulse rounded bg-gray-200" />
+          </div>
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+              >
+                <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 animate-pulse rounded-xl bg-gray-200" />
+                    <div className="space-y-1.5">
+                      <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+                      <div className="h-3 w-32 animate-pulse rounded bg-gray-200" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-20 animate-pulse rounded-full bg-gray-200" />
+                </div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3 px-6 py-4 sm:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, j) => (
+                    <div key={j} className="space-y-1">
+                      <div className="h-3 w-12 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-20 animate-pulse rounded bg-gray-200" />
+                    </div>
+                  ))}
+                </div>
+                <div className="px-6 pb-4">
+                  <div className="h-4 w-28 animate-pulse rounded bg-gray-200" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -115,7 +186,7 @@ export default function Orders() {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto max-w-3xl">
-        {/* Page header */}
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -123,10 +194,14 @@ export default function Orders() {
           </p>
         </div>
 
-        {/* Order cards */}
         <div className="flex flex-col gap-4">
           {orders.map((order) => {
             const isExpanded = expandedId === order.id;
+            const isCancelling = cancellingId === order.id;
+            const isCancelled = order.paymentStatus === "cancelled";
+            const canCancel =
+              ["pending", "processing"].includes(order.paymentStatus) &&
+              !isCancelled;
             const orderTotal = order.orderItems.reduce(
               (sum, item) => sum + Number(item.price) * item.quantity,
               0,
@@ -137,10 +212,9 @@ export default function Orders() {
                 key={order.id}
                 className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
               >
-                {/* Order header */}
+                {/* ── Order header ── */}
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 px-6 py-4">
                   <div className="flex items-center gap-3">
-                    {/* Order icon */}
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-green-50">
                       <svg
                         className="h-5 w-5 text-green-600"
@@ -166,30 +240,75 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex items-center gap-2">
                     {/* Status badge */}
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase ${statusColors[order.paymentStatus] ?? "bg-gray-100 text-gray-600"}`}
                     >
                       {order.paymentStatus}
-                      {/* Cancel button — only for pending/processing */}
                     </span>
-                    <span>
-                      {["pending", "processing"].includes(
-                        order.paymentStatus,
-                      ) && (
-                        <Link
-                          to={`/orders/${order.id}/cancel`}
-                          className="rounded-xl border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold text-red-600 transition hover:bg-red-100"
-                        >
-                          Cancel
-                        </Link>
-                      )}
-                    </span>
+
+                    {/* Cancel button */}
+                    {canCancel && (
+                      <button
+                        onClick={() => handleCancelClick(order.id)}
+                        className="cursor-pointer rounded-xl border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold text-red-600 transition hover:bg-red-100"
+                      >
+                        Cancel
+                      </button>
+                    )}
+
+                    {/* Delete button — only for cancelled orders */}
+                    {isCancelled && (
+                      <button
+                        onClick={() => handleDelete(order.id)}
+                        disabled={deletingId === order.id}
+                        className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
+                      >
+                        {deletingId === order.id ? (
+                          <Loader2 size={11} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={11} />
+                        )}
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                {/* Order info grid */}
+                {/* ── Inline cancel confirmation ── */}
+                {isCancelling && (
+                  <div className="flex items-center justify-between gap-3 border-b border-red-100 bg-red-50 px-6 py-3">
+                    <p className="text-sm font-medium text-red-700">
+                      Are you sure you want to cancel this order?
+                    </p>
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        onClick={handleCancelDismiss}
+                        disabled={loadingCancelId === order.id}
+                        className="cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        No, keep it
+                      </button>
+                      <button
+                        onClick={() => handleCancelConfirm(order.id)}
+                        disabled={loadingCancelId === order.id}
+                        className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                      >
+                        {loadingCancelId === order.id ? (
+                          <>
+                            <Loader2 size={12} className="animate-spin" />
+                            Cancelling…
+                          </>
+                        ) : (
+                          "Yes, cancel"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Order info grid ── */}
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 px-6 py-4 sm:grid-cols-4">
                   <div>
                     <p className="mb-0.5 text-xs font-medium text-gray-400">
@@ -229,51 +348,32 @@ export default function Orders() {
                   </div>
                 </div>
 
-                {/* Toggle button */}
+                {/* ── Toggle items ── */}
                 <div className="px-6 pb-4">
                   <button
                     onClick={() => toggleExpand(order.id)}
                     className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-green-600 transition-colors hover:text-green-700"
                   >
-                    {isExpanded ? (
-                      <>
-                        <svg
-                          className="h-4 w-4 rotate-180 transition-transform"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                        Hide Items
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                        View Items ({order.orderItems.length})
-                      </>
-                    )}
+                    <svg
+                      className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                    {isExpanded
+                      ? "Hide Items"
+                      : `View Items (${order.orderItems.length})`}
                   </button>
                 </div>
 
-                {/* Expanded items */}
+                {/* ── Expanded items ── */}
                 {isExpanded && (
                   <div className="border-t border-gray-100 bg-gray-50/60 px-6 py-4">
                     <div className="flex flex-col gap-3">
@@ -283,7 +383,6 @@ export default function Orders() {
                           className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm"
                         >
                           <div className="flex items-center gap-3">
-                            {/* Product icon */}
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100">
                               <svg
                                 className="h-4 w-4 text-gray-400"
@@ -313,13 +412,11 @@ export default function Orders() {
                           </p>
                         </div>
                       ))}
-
-                      {/* Items total */}
-                      <div className="mt-1 flex cursor-pointer items-center justify-between border-t border-gray-200 pt-2">
+                      <div className="mt-1 flex items-center justify-between border-t border-gray-200 pt-2">
                         <span className="text-sm font-semibold text-gray-600">
                           Order Total
                         </span>
-                        <span className="cursor-pointer text-base font-extrabold text-green-600">
+                        <span className="text-base font-extrabold text-green-600">
                           Rs. {orderTotal}
                         </span>
                       </div>

@@ -22,6 +22,8 @@ const orderApi = {
   cancel: (id: number) => {
     return api.patch(`/orders/${id}/cancel`);
   },
+
+  delete: (id: number) => api.delete(`/orders/${id}`),
 };
 
 export default orderApi;
