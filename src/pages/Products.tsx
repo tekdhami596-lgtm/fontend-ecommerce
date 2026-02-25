@@ -58,6 +58,60 @@ const SORT_OPTIONS: {
 
 const PAGE_LIMIT = 10;
 
+// ── Skeleton card — mirrors the real card structure exactly ──────────────────
+function SkeletonCard() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm">
+      {/* Image */}
+      <div className="h-36 animate-pulse bg-gray-200 sm:h-44 md:h-48" />
+
+      {/* Info */}
+      <div className="flex flex-1 flex-col gap-2 p-2.5 sm:p-4">
+        {/* Title */}
+        <div className="h-4 w-3/4 animate-pulse rounded-md bg-gray-200" />
+
+        {/* Description — hidden on mobile, matches sm:block */}
+        <div className="hidden space-y-1.5 sm:block">
+          <div className="h-3 w-full animate-pulse rounded bg-gray-200" />
+          <div className="h-3 w-5/6 animate-pulse rounded bg-gray-200" />
+        </div>
+
+        {/* Price + stock row */}
+        <div className="mt-auto flex items-center justify-between pt-1 sm:pt-2">
+          <div className="h-5 w-16 animate-pulse rounded-md bg-gray-200" />
+          <div className="h-4 w-14 animate-pulse rounded-md bg-gray-200" />
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-1 flex flex-col gap-1.5 sm:gap-2">
+          <div className="h-8 w-full animate-pulse rounded-lg bg-gray-200 sm:h-9" />
+          <div className="h-8 w-full animate-pulse rounded-lg bg-gray-100 sm:h-9" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductGridSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      {/* Toolbar skeleton */}
+      <div className="mb-5 flex items-center justify-between">
+        <div className="h-5 w-32 animate-pulse rounded-md bg-gray-200" />
+        <div className="h-9 w-24 animate-pulse rounded-xl bg-gray-200" />
+      </div>
+
+      {/* Grid — same columns as the real grid */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
+        {Array.from({ length: PAGE_LIMIT }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +135,6 @@ function Products() {
   const searchQuery = searchParams.get("search");
   const categoryQuery = searchParams.get("categoryId");
 
-  // Re-fetch from page 1 when search params OR sort changes
   useEffect(() => {
     setProducts([]);
     setPage(1);
@@ -89,7 +142,6 @@ function Products() {
     doFetch(1, true);
   }, [searchParams, activeSort]);
 
-  // Close sort on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest("#products-sort-dropdown"))
@@ -104,16 +156,11 @@ function Products() {
       const params = new URLSearchParams();
       params.set("page", String(pageNum));
       params.set("limit", String(PAGE_LIMIT));
-
-      // ── Pass current search params through ───────────────────
       const categoryId = searchParams.get("categoryId");
       const search = searchParams.get("search");
       if (categoryId) params.set("categoryId", categoryId);
       if (search) params.set("q", search);
-
-      // ── Server-side sort ─────────────────────────────────────
       if (activeSort !== "default") params.set("sort", activeSort);
-
       return params;
     },
     [searchParams, activeSort],
@@ -178,16 +225,10 @@ function Products() {
     }
   };
 
-  // ── Loading (initial) ─────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
-      </div>
-    );
-  }
+  // ── Loading: full-page skeleton ───────────────────────────────────────────
+  if (loading) return <ProductGridSkeleton />;
 
-  // ── Empty ─────────────────────────────────────────────────
+  // ── Empty ─────────────────────────────────────────────────────────────────
   if (products.length === 0) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-3 rounded-xl bg-white py-16 text-center shadow-sm">
@@ -204,7 +245,6 @@ function Products() {
     <div className="min-h-screen bg-gray-50 px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8">
       {/* ── Toolbar ── */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        {/* Left: count + context chips */}
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm font-medium text-gray-700">
             <span className="font-bold text-indigo-600">{products.length}</span>
@@ -227,7 +267,7 @@ function Products() {
               {activeSortLabel}
               <button
                 onClick={() => handleSortChange("default")}
-                className="ml-0.5 leading-none text-emerald-400 transition-colors hover:text-red-500"
+                className="ml-0.5 cursor-pointer leading-none text-emerald-400 transition-colors hover:text-red-500"
               >
                 ✕
               </button>
@@ -235,11 +275,11 @@ function Products() {
           )}
         </div>
 
-        {/* Right: Sort dropdown */}
+        {/* Sort dropdown */}
         <div id="products-sort-dropdown" className="relative">
           <button
             onClick={() => setSortOpen((v) => !v)}
-            className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium shadow-sm transition-all ${
+            className={`flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium shadow-sm transition-all ${
               activeSort !== "default"
                 ? "border-indigo-400 bg-indigo-600 text-white shadow-indigo-200"
                 : "border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
@@ -392,8 +432,10 @@ function Products() {
                   onClick={() => navigate(`/products/${product.id}`)}
                   className="w-full cursor-pointer rounded-lg border border-indigo-600 px-3 py-1.5 text-xs font-medium text-indigo-600 transition hover:bg-indigo-50 sm:py-2 sm:text-sm"
                 >
-                  <span className="sm:hidden">Details</span>
-                  <span className="hidden sm:inline">View Product Details</span>
+                  <span className="cursor-pointer sm:hidden">Details</span>
+                  <span className="hidden cursor-pointer sm:inline">
+                    View Product Details
+                  </span>
                 </button>
               </div>
             </div>

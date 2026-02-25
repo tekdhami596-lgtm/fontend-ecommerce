@@ -542,17 +542,17 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Hamburger */}
+            
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="-mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
+              className="-mr-1 cursor-pointer flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
             >
               {mobileOpen ? <HiX size={17} /> : <HiMenu size={17} />}
             </button>
           </div>
         </div>
 
-        {/* ── Mobile Search ── */}
+        
         <div className="border-t border-white/5 px-4 py-2.5 md:hidden">
           <form onSubmit={handleSearch}>
             <div className="flex overflow-hidden rounded-xl border border-white/10 bg-white/6">
