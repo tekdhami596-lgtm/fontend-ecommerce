@@ -18,8 +18,8 @@ import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
 import { logoutUser } from "../redux/slice/userSlice";
 import doko from "../assets/Doko-logo.png";
+import { resetCart } from "../redux/slice/cartSlice";
 
-/* ─── Styles injected once ─────────────────────────────────────────────── */
 const navStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -117,7 +117,6 @@ const navStyles = `
   .logo-wrap:hover .logo-icon { transform: rotate(-8deg) scale(1.1); }
 `;
 
-/* ─── Types ─────────────────────────────────────────────────────────────── */
 type Role = "admin" | "seller" | "buyer" | undefined;
 
 const navLinks: Record<NonNullable<Role>, { to: string; label: string }[]> = {
@@ -139,7 +138,6 @@ const navLinks: Record<NonNullable<Role>, { to: string; label: string }[]> = {
   ],
 };
 
-/* ─── Debounce ───────────────────────────────────────────────────────────── */
 function useDebounce<T>(value: T, delay = 400): T {
   const [dv, setDv] = useState<T>(value);
   useEffect(() => {
@@ -149,7 +147,6 @@ function useDebounce<T>(value: T, delay = 400): T {
   return dv;
 }
 
-/* ─── SubCategoryList ────────────────────────────────────────────────────── */
 function SubCategoryList({
   items,
   onSelect,
@@ -195,7 +192,6 @@ function SubCategoryList({
   );
 }
 
-/* ─── Navbar ─────────────────────────────────────────────────────────────── */
 export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -263,7 +259,9 @@ export default function Navbar() {
     }
   };
 
+  
   const handleLogout = () => {
+    dispatch(resetCart()); 
     dispatch(logoutUser());
     setUserOpen(false);
     navigate("/login");

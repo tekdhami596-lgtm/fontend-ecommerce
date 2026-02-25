@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/axios";
+import { loadUserCart, resetCart } from "./cartSlice";
 
 export type UserRole = "buyer" | "seller" | "admin";
 export type Gender = "male" | "female" | "other";
@@ -24,10 +25,13 @@ interface UserState {
 
 const initialState: UserState = { data: null };
 
-// ── Logout thunk ──────────────────────────────────────────────────────────────
-export const logoutUser = createAsyncThunk("user/logout", async () => {
-  await api.post("/auth/logout");
-});
+export const logoutUser = createAsyncThunk(
+  "user/logout",
+  async (_, { dispatch }) => {
+    await api.post("/auth/logout");
+    dispatch(resetCart());
+  },
+);
 
 export const userSlice = createSlice({
   name: "user",
@@ -44,16 +48,22 @@ export const userSlice = createSlice({
     builder.addCase(logoutUser.fulfilled, (state) => {
       state.data = null;
     });
-    builder.addCase(logoutUser.rejected, (state) => {
-      state.data = null; // clear state even if API fails
+    builder.addCase(logoutUser.rejected, (state, action) => {
+      state.data = null;
     });
   },
 });
 
 export const { login, updateProfile } = userSlice.actions;
+
+export const loginUser =
+  (user: User) => (dispatch: (action: unknown) => void) => {
+    dispatch(userSlice.actions.login(user));
+    dispatch(loadUserCart(user.id));
+  };
+
 export default userSlice.reducer;
 
-// ── Selectors ────────────────────────────────────────────────────────────────
 export const selectUser = (state: { user: UserState }) => state.user.data;
 export const selectRole = (state: { user: UserState }) => state.user.data?.role;
 export const selectIsLoggedIn = (state: { user: UserState }) =>
