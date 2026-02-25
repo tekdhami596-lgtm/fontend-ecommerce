@@ -89,7 +89,7 @@ export default function Cart() {
             </p>
             <button
               onClick={() => navigate("/products")}
-              className="rounded-xl border-2 border-blue-600 px-6 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-600 hover:text-white"
+              className="cursor-pointer rounded-xl border-2 border-blue-600 px-6 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-600 hover:text-white"
             >
               Continue Shopping
             </button>
@@ -168,7 +168,10 @@ export default function Cart() {
             </div>
 
             {/* ── Order Summary ── */}
-            <div className="lg:sticky lg:top-24 lg:w-[420px] xl:w-[460px]">
+            <div
+              style={{ width: "420px", flexShrink: 0 }}
+              className="lg:sticky lg:top-24"
+            >
               <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
                 <h2 className="mb-5 text-xl font-bold text-gray-800">
                   Order Summary
