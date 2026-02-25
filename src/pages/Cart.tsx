@@ -127,7 +127,7 @@ export default function Cart() {
                       </div>
                       <button
                         onClick={() => handleDelete(item)}
-                        className="flex-shrink-0 rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                        className="flex-shrink-0 cursor-pointer rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -141,7 +141,7 @@ export default function Cart() {
                             handleQuantityChange(item, item.quantity - 1)
                           }
                           disabled={item.quantity <= 1}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-sm font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-40"
+                          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-white text-sm font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-40"
                         >
                           −
                         </button>
@@ -153,7 +153,7 @@ export default function Cart() {
                             handleQuantityChange(item, item.quantity + 1)
                           }
                           disabled={item.quantity >= item.stock}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-sm font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-40"
+                          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-white text-sm font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-40"
                         >
                           +
                         </button>
@@ -168,13 +168,13 @@ export default function Cart() {
             </div>
 
             {/* ── Order Summary ── */}
-            <div className="lg:sticky lg:top-24 lg:w-[340px] xl:w-[380px]">
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <h2 className="mb-4 text-lg font-bold text-gray-800">
+            <div className="lg:sticky lg:top-24 lg:w-[420px] xl:w-[460px]">
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <h2 className="mb-5 text-xl font-bold text-gray-800">
                   Order Summary
                 </h2>
 
-                <div className="flex flex-col gap-2 text-sm">
+                <div className="flex flex-col gap-3 text-sm">
                   <div className="flex justify-between text-gray-600">
                     <span>Total Items</span>
                     <span className="font-medium">{totalItems}</span>
@@ -183,7 +183,7 @@ export default function Cart() {
                     <span>Delivery</span>
                     <span className="font-semibold text-green-600">Free</span>
                   </div>
-                  <div className="mt-2 flex justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
+                  <div className="mt-2 flex justify-between border-t border-gray-100 pt-4 text-lg font-bold text-gray-900">
                     <span>Total</span>
                     <span>Rs. {totalAmount.toLocaleString()}</span>
                   </div>
@@ -192,14 +192,14 @@ export default function Cart() {
                 <button
                   onClick={() => navigate("/checkout")}
                   disabled={cartItems.length === 0}
-                  className="mt-5 w-full rounded-xl bg-blue-600 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-6 w-full cursor-pointer rounded-xl bg-blue-600 py-3.5 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Proceed to Checkout
                 </button>
 
                 <button
                   onClick={() => navigate("/products")}
-                  className="mt-2 w-full rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                  className="mt-2.5 w-full cursor-pointer rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
                 >
                   Continue Shopping
                 </button>
