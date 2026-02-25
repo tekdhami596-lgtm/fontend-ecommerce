@@ -101,7 +101,6 @@ export default function HomePage() {
       : null,
   );
 
-  // ✅ Memoized so they don't cause infinite re-renders
   const flatCategories = useMemo(
     () => flattenTree(categoryTree),
     [categoryTree],
@@ -110,20 +109,17 @@ export default function HomePage() {
 
   const hasMore = products.length < totalCount;
 
-  // ✅ Fetch categories only once on mount
   useEffect(() => {
     if (!categoryTree || categoryTree.length === 0) {
       dispatch(fetchCategoryTree());
     }
   }, []);
 
-  // ✅ Sync activeCategoryId from URL
   useEffect(() => {
     const id = searchParams.get("categoryId");
     setActiveCategoryId(id ? Number(id) : null);
   }, [searchParams]);
 
-  // ✅ flatCategories.length as dependency so it re-runs after categories load
   useEffect(() => {
     if (activeCategoryId && flatCategories.length === 0) return;
     setProducts([]);
@@ -132,7 +128,6 @@ export default function HomePage() {
     doFetch(1, true);
   }, [activeCategoryId, activeSort, flatCategories.length]);
 
-  // ✅ Close sort dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest("#home-sort-dropdown"))
@@ -230,12 +225,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Banner */}
       <div className="mx-auto max-w-7xl px-3 pt-6 sm:px-6">
         <BannerCarousel />
       </div>
 
-      {/* Category Filter Bar */}
       <div className="sticky top-0 z-20 bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto py-3">
@@ -266,7 +259,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Toolbar: heading + sort */}
       <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6">
         <div className="flex items-center justify-between">
           <div>
@@ -278,7 +270,6 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Sort Dropdown */}
           <div className="relative" id="home-sort-dropdown">
             <button
               onClick={() => setSortOpen((o) => !o)}
@@ -312,7 +303,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="mx-auto max-w-7xl px-3 pb-10 sm:px-6">
         {loading ? (
           <div className="flex items-center justify-center py-24">
@@ -332,7 +322,6 @@ export default function HomePage() {
                   key={product.id}
                   className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md"
                 >
-                  {/* Product Image */}
                   <Link to={`/products/${product.id}`} className="block">
                     <div className="relative aspect-square overflow-hidden bg-gray-100">
                       {product.images?.[0]?.path ? (
@@ -356,7 +345,6 @@ export default function HomePage() {
                     </div>
                   </Link>
 
-                  {/* Product Info */}
                   <div className="flex flex-1 flex-col p-3">
                     <Link to={`/products/${product.id}`}>
                       <h3 className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-gray-600">
@@ -375,7 +363,7 @@ export default function HomePage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={product.stock === 0}
-                        className="flex items-center gap-1 rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex cursor-pointer items-center gap-1 rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <IoCartOutline size={14} />
                         Add
@@ -386,7 +374,6 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Load More */}
             {hasMore && (
               <div className="mt-8 flex justify-center">
                 <button
