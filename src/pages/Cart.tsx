@@ -78,7 +78,6 @@ export default function Cart() {
         </h1>
 
         {cartItems.length === 0 ? (
-          /* ── Empty state ── */
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white py-20 text-center">
             <ShoppingCart className="mb-3 h-12 w-12 text-gray-300" />
             <p className="mb-1 font-semibold text-gray-500">
@@ -96,23 +95,20 @@ export default function Cart() {
           </div>
         ) : (
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
-            {/* ── Cart Items ── */}
-            <div className="flex flex-col gap-3 lg:flex-1">
+            {/* ── Cart Items (takes remaining space) ── */}
+            <div className="flex min-w-0 flex-1 flex-col gap-3">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:gap-4 sm:p-4"
                 >
-                  {/* Image */}
                   <img
                     src={item.image ? getImageUrl(item.image) : NoImage}
                     alt={item.title}
                     className="h-20 w-20 flex-shrink-0 rounded-xl object-cover sm:h-24 sm:w-24"
                   />
 
-                  {/* Content */}
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
-                    {/* Top row: title + delete */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-gray-800 sm:text-base">
@@ -133,7 +129,6 @@ export default function Cart() {
                       </button>
                     </div>
 
-                    {/* Bottom row: qty controls + subtotal */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1">
                         <button
@@ -167,17 +162,14 @@ export default function Cart() {
               ))}
             </div>
 
-            {/* ── Order Summary ── */}
-            <div
-              style={{ width: "420px", flexShrink: 0 }}
-              className="lg:sticky lg:top-24"
-            >
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <h2 className="mb-5 text-xl font-bold text-gray-800">
+            {/* ── Order Summary (fixed width, won't overflow) ── */}
+            <div className="w-full flex-shrink-0 lg:sticky lg:top-24 lg:w-64">
+              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                <h2 className="mb-4 text-lg font-bold text-gray-800">
                   Order Summary
                 </h2>
 
-                <div className="flex flex-col gap-3 text-sm">
+                <div className="flex flex-col gap-2.5 text-sm">
                   <div className="flex justify-between text-gray-600">
                     <span>Total Items</span>
                     <span className="font-medium">{totalItems}</span>
@@ -186,7 +178,7 @@ export default function Cart() {
                     <span>Delivery</span>
                     <span className="font-semibold text-green-600">Free</span>
                   </div>
-                  <div className="mt-2 flex justify-between border-t border-gray-100 pt-4 text-lg font-bold text-gray-900">
+                  <div className="mt-1 flex justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
                     <span>Total</span>
                     <span>Rs. {totalAmount.toLocaleString()}</span>
                   </div>
@@ -195,14 +187,14 @@ export default function Cart() {
                 <button
                   onClick={() => navigate("/checkout")}
                   disabled={cartItems.length === 0}
-                  className="mt-6 w-full cursor-pointer rounded-xl bg-blue-600 py-3.5 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-5 w-full cursor-pointer rounded-xl bg-blue-600 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Proceed to Checkout
                 </button>
 
                 <button
                   onClick={() => navigate("/products")}
-                  className="mt-2.5 w-full cursor-pointer rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                  className="mt-2 w-full cursor-pointer rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
                 >
                   Continue Shopping
                 </button>

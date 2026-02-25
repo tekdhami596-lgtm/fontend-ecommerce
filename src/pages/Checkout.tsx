@@ -206,7 +206,7 @@ export default function Checkout() {
 
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
-          {/* ── LEFT: Cart Items ── */}
+          
           <div className="flex flex-col gap-4 lg:min-w-0 lg:flex-1">
             <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Your Items
