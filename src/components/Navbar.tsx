@@ -259,9 +259,8 @@ export default function Navbar() {
     }
   };
 
-  
   const handleLogout = () => {
-    dispatch(resetCart()); 
+    dispatch(resetCart());
     dispatch(logoutUser());
     setUserOpen(false);
     navigate("/login");
@@ -416,7 +415,7 @@ export default function Navbar() {
           </form>
 
           {/* ── Right Actions ── */}
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-2 sm:-mr-0 md:-mr-0 md:gap-2">
             {/* Cart */}
             {isBuyer && (
               <Link
@@ -546,7 +545,7 @@ export default function Navbar() {
             {/* Hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
+              className="-mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
             >
               {mobileOpen ? <HiX size={17} /> : <HiMenu size={17} />}
             </button>
