@@ -14,10 +14,10 @@ interface CartState {
   items: CartItem[];
 }
 
-// ── Storage helpers (keyed per user) ─────────────────────────────────────────
+// ── Per-user storage helpers ──────────────────────────────────────────────────
 
 export function getCartKey(userId?: number | string) {
-  return userId ? `dokomart_cart_${userId}` : "dokomart_cart_guest";
+  return userId ? `dokomart_cart_${userId}` : `dokomart_cart_guest`;
 }
 
 export function loadCart(userId?: number | string): CartItem[] {
@@ -29,7 +29,7 @@ export function loadCart(userId?: number | string): CartItem[] {
   }
 }
 
-export function saveCart(items: CartItem[], userId?: number | string) {
+function saveCart(items: CartItem[], userId?: number | string) {
   try {
     localStorage.setItem(getCartKey(userId), JSON.stringify(items));
   } catch {
@@ -37,82 +37,72 @@ export function saveCart(items: CartItem[], userId?: number | string) {
   }
 }
 
-export function clearCartStorage(userId?: number | string) {
-  try {
-    localStorage.removeItem(getCartKey(userId));
-  } catch {
-    // ignore
-  }
+// ── Active session tracker ────────────────────────────────────────────────────
+// Tracks current userId so all mutations save to the right key
+// without needing userId passed in every single action.
+
+let activeUserId: number | string | undefined = undefined;
+
+export function setActiveUser(userId?: number | string) {
+  activeUserId = userId;
 }
 
 // ── Slice ─────────────────────────────────────────────────────────────────────
 
-const initialState: CartState = { items: loadCart() }; // guest cart on init
+const initialState: CartState = { items: loadCart() };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    /** Call this after login to hydrate the logged-in user's cart */
+    /** Called after login — loads the user's saved cart */
     loadUserCart: (state, action: PayloadAction<number | string>) => {
+      setActiveUser(action.payload);
       state.items = loadCart(action.payload);
     },
 
-    /** Call this on logout to wipe the in-memory cart (storage is kept per-user) */
+    /** Called on logout — clears in-memory cart */
     resetCart: (state) => {
+      setActiveUser(undefined);
       state.items = [];
     },
 
-    setCart: (
-      state,
-      action: PayloadAction<{ items: CartItem[]; userId?: number | string }>,
-    ) => {
-      state.items = action.payload.items;
-      saveCart(state.items, action.payload.userId);
+    // Original flat signatures preserved — no changes needed in pages ✅
+
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+      saveCart(state.items, activeUserId);
     },
 
-    addToCart: (
-      state,
-      action: PayloadAction<{ item: CartItem; userId?: number | string }>,
-    ) => {
+    addToCart: (state, action: PayloadAction<CartItem>) => {
       const existing = state.items.find(
-        (i) => i.productId === action.payload.item.productId,
+        (i) => i.productId === action.payload.productId,
       );
       if (existing) {
-        existing.quantity += action.payload.item.quantity;
+        existing.quantity += action.payload.quantity;
       } else {
-        state.items.push(action.payload.item);
+        state.items.push(action.payload);
       }
-      saveCart(state.items, action.payload.userId);
+      saveCart(state.items, activeUserId);
     },
 
     updateCart: (
       state,
-      action: PayloadAction<{
-        id: number;
-        quantity: number;
-        userId?: number | string;
-      }>,
+      action: PayloadAction<{ id: number; quantity: number }>,
     ) => {
       const item = state.items.find((i) => i.id === action.payload.id);
       if (item) item.quantity = action.payload.quantity;
-      saveCart(state.items, action.payload.userId);
+      saveCart(state.items, activeUserId);
     },
 
-    removeFromCart: (
-      state,
-      action: PayloadAction<{ id: number; userId?: number | string }>,
-    ) => {
-      state.items = state.items.filter((i) => i.id !== action.payload.id);
-      saveCart(state.items, action.payload.userId);
+    removeFromCart: (state, action: PayloadAction<number>) => {
+      state.items = state.items.filter((i) => i.id !== action.payload);
+      saveCart(state.items, activeUserId);
     },
 
-    clearCart: (
-      state,
-      action: PayloadAction<{ userId?: number | string } | undefined>,
-    ) => {
+    clearCart: (state) => {
       state.items = [];
-      clearCartStorage(action?.payload?.userId);
+      saveCart(state.items, activeUserId);
     },
   },
 });

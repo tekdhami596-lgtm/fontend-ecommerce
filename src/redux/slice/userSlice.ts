@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 import { loadUserCart, resetCart } from "./cartSlice";
+import { AppDispatch } from "../store";
 
 export type UserRole = "buyer" | "seller" | "admin";
 export type Gender = "male" | "female" | "other";
@@ -48,7 +49,7 @@ export const userSlice = createSlice({
     builder.addCase(logoutUser.fulfilled, (state) => {
       state.data = null;
     });
-    builder.addCase(logoutUser.rejected, (state, action) => {
+    builder.addCase(logoutUser.rejected, (state) => {
       state.data = null;
     });
   },
@@ -56,11 +57,10 @@ export const userSlice = createSlice({
 
 export const { login, updateProfile } = userSlice.actions;
 
-export const loginUser =
-  (user: User) => (dispatch: (action: unknown) => void) => {
-    dispatch(userSlice.actions.login(user));
-    dispatch(loadUserCart(user.id));
-  };
+export const loginUser = (user: User) => (dispatch: AppDispatch) => {
+  dispatch(userSlice.actions.login(user));
+  dispatch(loadUserCart(user.id));
+};
 
 export default userSlice.reducer;
 
