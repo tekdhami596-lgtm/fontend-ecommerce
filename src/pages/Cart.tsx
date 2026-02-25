@@ -168,7 +168,7 @@ export default function Cart() {
             </div>
 
             {/* ── Order Summary ── */}
-            <div className="lg:sticky lg:top-24 lg:w-72 xl:w-80">
+            <div className="lg:sticky lg:top-24 lg:w-[340px] xl:w-[380px]">
               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <h2 className="mb-4 text-lg font-bold text-gray-800">
                   Order Summary
