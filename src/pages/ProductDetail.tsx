@@ -103,12 +103,9 @@ const ProductDetailPage: React.FC = () => {
   if (loading) return <p className="mt-20 text-center">Loading...</p>;
   if (!product) return <p className="mt-20 text-center">Product not found</p>;
 
- 
-
   return (
     <div className="mx-auto max-w-6xl p-4">
       <div className="flex flex-col gap-6 md:flex-row">
-        {/* Left: Images */}
         <div className="md:w-1/2">
           <img
             src={getImageUrl(mainImage)}
@@ -122,7 +119,7 @@ const ProductDetailPage: React.FC = () => {
                 src={getImageUrl(img.path)}
                 alt={`Thumbnail ${idx}`}
                 onClick={() => setMainImage(img.path)}
-                className={`h-20 w-20 cursor-pointer rounded border object-contain ${
+                className={`h-20 w-20 cursor-pointer object-contain ${
                   mainImage === img.path ? "border-blue-500" : ""
                 }`}
               />

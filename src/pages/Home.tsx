@@ -16,6 +16,7 @@ import {
 import notify from "../helpers/notify";
 import getImageUrl from "../helpers/imageUrl";
 import BannerCarousel from "../components/BannerCarousel";
+import ProductGridSkeleton from "../components/ProductGridSkeleton";
 
 type ProductImageType = { path: string };
 type Product = {
@@ -306,7 +307,7 @@ export default function HomePage() {
       <div className="mx-auto max-w-7xl px-3 pb-10 sm:px-6">
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <Loader2 className="animate-spin text-gray-400" size={36} />
+            <ProductGridSkeleton />
           </div>
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-400">

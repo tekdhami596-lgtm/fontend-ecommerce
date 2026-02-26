@@ -347,7 +347,7 @@ function Products() {
                 <img
                   src={getImageUrl(product.images[0].path)}
                   alt={product.title}
-                  className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
+                  className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
