@@ -161,7 +161,7 @@ export default function HomePage() {
         const res = await api.get(`/products?${params.toString()}`);
         const incoming: Product[] = res.data.data || [];
         const total: number =
-          res.data.count ?? res.data.total ?? incoming.length;
+          res.data.total ?? res.data.count ?? incoming.length;
         setTotalCount(total);
         setProducts((prev) => (reset ? incoming : [...prev, ...incoming]));
       } catch (err) {
