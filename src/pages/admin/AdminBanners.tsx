@@ -83,7 +83,7 @@ export default function AdminBanners() {
     try {
       await api.delete(`/admin/banners/${id}`);
       setBanners((prev) => prev.filter((b) => b.id !== id));
-      notify.success("Banner deleted successfully")
+      notify.success("Banner deleted successfully");
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed");
     }
@@ -198,7 +198,7 @@ export default function AdminBanners() {
             <button
               type="submit"
               disabled={uploading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
             >
               <Upload size={18} />
               {uploading ? "Uploading..." : "Upload Banner"}
@@ -247,7 +247,7 @@ export default function AdminBanners() {
                 </div>
                 <button
                   onClick={() => handleDelete(banner.id)}
-                  className="rounded-xl bg-red-50 p-2.5 text-red-500 transition hover:bg-red-100"
+                  className="cursor-pointer rounded-xl bg-red-50 p-2.5 text-red-500 transition hover:bg-red-100"
                 >
                   <Trash2 size={16} />
                 </button>
