@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Upload, Image } from "lucide-react";
 import api from "../../api/axios";
 import getImageUrl from "../../helpers/imageUrl";
+import notify from "../../helpers/notify";
 
 interface Banner {
   id: number;
@@ -69,6 +70,7 @@ export default function AdminBanners() {
       setImageFile(null);
       setPreview(null);
       fetchBanners();
+      notify.success("Banner Uploaded Successfully");
     } catch (err: any) {
       alert(err.response?.data?.message || "Upload failed");
     } finally {
@@ -81,6 +83,7 @@ export default function AdminBanners() {
     try {
       await api.delete(`/admin/banners/${id}`);
       setBanners((prev) => prev.filter((b) => b.id !== id));
+      notify.success("Banner deleted successfully")
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed");
     }
