@@ -213,7 +213,7 @@ export default function AdminProducts() {
                                 </div>
                               )}
                             </div>
-                            <span className="max-w-[180px] truncate font-medium text-gray-800">
+                            <span className="max-w-45 truncate font-medium text-gray-800">
                               {product.title}
                             </span>
                           </div>
