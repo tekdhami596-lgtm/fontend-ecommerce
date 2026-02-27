@@ -132,10 +132,10 @@ function SellerProduct() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="group flex flex-col rounded-xl bg-white shadow-md transition hover:shadow-xl"
+                className="group flex flex-col  bg-white shadow-md transition hover:shadow-xl"
               >
                 {/* Image */}
-                <div className="relative h-40 overflow-hidden rounded-t-xl bg-gray-200 sm:h-44 md:h-48">
+                <div className="relative h-40 overflow-hidden  bg-gray-200 sm:h-44 md:h-48">
                   {product.images?.length > 0 ? (
                     <img
                       src={getImageUrl(product.images[0].path)}
