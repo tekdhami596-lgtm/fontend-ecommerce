@@ -70,9 +70,7 @@ function SellerProduct() {
   return (
     <div className="min-h-screen bg-gray-100 px-3 py-6 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-7xl">
-     
         <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
-         
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
@@ -130,16 +128,16 @@ function SellerProduct() {
                 key={product.id}
                 className="group flex flex-col bg-white shadow-md transition hover:shadow-xl"
               >
-                <div className="relative h-40 overflow-hidden bg-gray-200 sm:h-44 md:h-48">
+                <div className="relative aspect-square overflow-hidden bg-gray-100">
                   {product.images?.length > 0 ? (
                     <img
                       src={getImageUrl(product.images[0].path)}
                       alt={product.title}
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-gray-400">
-                      No Image
+                    <div className="flex h-full w-full items-center justify-center text-gray-300">
+                      <span className="text-4xl">🛍️</span>
                     </div>
                   )}
                 </div>
