@@ -223,7 +223,7 @@ function Products() {
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-3 rounded-xl bg-white py-16 text-center shadow-sm">
+      <div className="flex min-h-100 flex-col items-center justify-center gap-3 rounded-xl bg-white py-16 text-center shadow-sm">
         <img src={NoImageFound} alt="No products" className="h-16 opacity-30" />
         <p className="text-lg font-medium text-gray-400">No products found</p>
         <p className="text-sm text-gray-400">
@@ -437,7 +437,7 @@ function Products() {
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="flex min-w-[180px] items-center justify-center gap-2 rounded-2xl border-2 border-indigo-600 bg-white px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-600 hover:text-white disabled:opacity-60"
+            className="flex min-w-45 items-center justify-center gap-2 rounded-2xl border-2 border-indigo-600 bg-white px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-600 hover:text-white disabled:opacity-60"
           >
             {loadingMore ? (
               <>

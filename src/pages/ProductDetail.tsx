@@ -116,7 +116,7 @@ const ProductDetailPage: React.FC = () => {
           <img
             src={getImageUrl(mainImage)}
             alt={product.title}
-            className="object-fit r h-[400px] w-full"
+            className="object-fit r h-100 w-full"
           />
           <div className="mt-4 flex gap-2">
             {product.images.map((img, idx) => (
