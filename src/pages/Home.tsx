@@ -153,22 +153,26 @@ export default function HomePage() {
     [activeCategoryId, activeSort, flatCategories],
   );
 
-  const doFetch = async (pageNum: number, reset: boolean) => {
-    try {
-      reset ? setLoading(true) : setLoadingMore(true);
-      const params = buildParams(pageNum);
-      const res = await api.get(`/products?${params.toString()}`);
-      const incoming: Product[] = res.data.data || [];
-      const total: number = res.data.count ?? res.data.total ?? incoming.length;
-      setTotalCount(total);
-      setProducts((prev) => (reset ? incoming : [...prev, ...incoming]));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
+  const doFetch = useCallback(
+    async (pageNum: number, reset: boolean) => {
+      try {
+        reset ? setLoading(true) : setLoadingMore(true);
+        const params = buildParams(pageNum);
+        const res = await api.get(`/products?${params.toString()}`);
+        const incoming: Product[] = res.data.data || [];
+        const total: number =
+          res.data.count ?? res.data.total ?? incoming.length;
+        setTotalCount(total);
+        setProducts((prev) => (reset ? incoming : [...prev, ...incoming]));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [buildParams],
+  );
 
   const handleLoadMore = () => {
     const next = page + 1;
