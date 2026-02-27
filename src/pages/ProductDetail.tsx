@@ -101,7 +101,12 @@ const ProductDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <p className="mt-20 text-center"><ProductGridSkeleton /></p>;
+  if (loading)
+    return (
+      <p className="mt-20 text-center">
+        <ProductGridSkeleton />
+      </p>
+    );
   if (!product) return <p className="mt-20 text-center">Product not found</p>;
 
   return (
@@ -111,7 +116,7 @@ const ProductDetailPage: React.FC = () => {
           <img
             src={getImageUrl(mainImage)}
             alt={product.title}
-            className="object-fit h-[400px] w-full r"
+            className="object-fit r h-[400px] w-full"
           />
           <div className="mt-4 flex gap-2">
             {product.images.map((img, idx) => (
@@ -128,10 +133,8 @@ const ProductDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right: Info */}
         <div className="flex flex-col justify-between md:w-1/2">
           <div>
-            {/* Categories */}
             {product.categories?.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-1.5">
                 {product.categories.map((cat) => (
@@ -151,7 +154,6 @@ const ProductDetailPage: React.FC = () => {
             <p className="mt-4">{product.shortDescription}</p>
             <p className="mt-4">{product.description}</p>
 
-          
             <div className="mt-6 rounded border bg-gray-50 p-4">
               <h2 className="text-xl font-semibold">Seller Details</h2>
               {product.seller.storeName && (
