@@ -97,7 +97,7 @@ function CreateSellerProduct() {
       });
 
       form.images.forEach((file) => {
-        formData.append("images[]", file);
+        formData.append("images", file);
       });
 
       await api.post("/seller/products", formData);
