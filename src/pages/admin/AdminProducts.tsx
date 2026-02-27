@@ -14,10 +14,21 @@ interface Product {
   categories: { id: number; title: string }[];
 }
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  const debouncedSearch = useDebounce(search, 500);
 
   const fetchProducts = async (q = "") => {
     try {
@@ -37,10 +48,9 @@ export default function AdminProducts() {
     fetchProducts();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchProducts(search);
-  };
+  useEffect(() => {
+    fetchProducts(debouncedSearch);
+  }, [debouncedSearch]);
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("Remove this product from the platform?")) return;
@@ -65,7 +75,7 @@ export default function AdminProducts() {
               {products.length} products on the platform
             </p>
           </div>
-          <form onSubmit={handleSearch} className="flex w-full gap-2 sm:w-auto">
+          <div className="flex w-full gap-2 sm:w-auto">
             <input
               type="text"
               placeholder="Search products..."
@@ -73,13 +83,7 @@ export default function AdminProducts() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none sm:w-64"
             />
-            <button
-              type="submit"
-              className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
-            >
-              <Search size={16} />
-            </button>
-          </form>
+          </div>
         </div>
 
         {/* Loading */}
