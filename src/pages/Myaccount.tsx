@@ -16,7 +16,6 @@ import {
   LogOut,
   ChevronRight,
   Pencil,
-  
   Eye,
   EyeOff,
   Bell,
@@ -24,16 +23,13 @@ import {
 import Orders from "./Orders";
 import { AppDispatch } from "../redux/store";
 
-// ── Types ──────────────────────────────────────────────
 type Tab = "profile" | "orders" | "addresses" | "password" | "notifications";
 
-// ── Helpers ────────────────────────────────────────────
 const getInitials = (firstName?: string, lastName?: string) => {
   if (!firstName && !lastName) return "?";
   return `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase();
 };
 
-// ── ProfileSection ─────────────────────────────────────
 const ProfileSection = () => {
   const dispatch = useDispatch<AppDispatch>();
   const reduxUser = useSelector(selectUser);
@@ -278,8 +274,6 @@ const ProfileSection = () => {
   );
 };
 
-
-
 const AddressesSection = () => {
   const reduxUser = useSelector(selectUser);
   const deliveryAddress = reduxUser?.deliveryAddress ?? "";
@@ -425,7 +419,6 @@ const PasswordSection = () => {
   );
 };
 
-// ── NotificationsSection ───────────────────────────────
 const NotificationsSection = () => {
   const [prefs, setPrefs] = useState([
     {
@@ -494,7 +487,6 @@ const NotificationsSection = () => {
   );
 };
 
-// ── Main Page ──────────────────────────────────────────
 const MyAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();

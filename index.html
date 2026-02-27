@@ -2,12 +2,104 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="./src//assets/Doko-logo.png" />
+    <link rel="icon" type="image/png" href="./src/assets/Doko-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ecommerce-frontend</title>
+    <style>
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.95);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+      #initial-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #ffffff;
+        font-family: sans-serif;
+        animation: fadeIn 0.4s ease;
+      }
+      #initial-loader img {
+        width: 100px;
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      #initial-loader .brand {
+        margin-top: 16px;
+        font-size: 26px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #6366f1, #ec4899, #6366f1);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 2s linear infinite;
+      }
+      #initial-loader .tagline {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #9ca3af;
+        letter-spacing: 0.05em;
+      }
+      #initial-loader .dots {
+        margin-top: 32px;
+        display: flex;
+        gap: 8px;
+      }
+      #initial-loader .dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #6366f1;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      #initial-loader .dots span:nth-child(2) {
+        animation-delay: 0.2s;
+        background: #818cf8;
+      }
+      #initial-loader .dots span:nth-child(3) {
+        animation-delay: 0.4s;
+        background: #ec4899;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="initial-loader">
+        <img src="./src/assets/Doko-logo.png" alt="Doko" />
+        <p class="brand">Doko</p>
+        <p class="tagline">Your one-stop shop</p>
+        <div class="dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
