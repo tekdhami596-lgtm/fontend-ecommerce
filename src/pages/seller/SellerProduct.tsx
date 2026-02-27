@@ -131,7 +131,7 @@ function SellerProduct() {
                 key={product.id}
                 className="group flex flex-col bg-white shadow-md transition hover:shadow-xl"
               >
-                {/* Image */}
+
                 <div className="relative h-40 overflow-hidden bg-gray-200 sm:h-44 md:h-48">
                   {product.images?.length > 0 ? (
                     <img
