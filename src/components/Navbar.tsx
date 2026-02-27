@@ -372,7 +372,7 @@ export default function Navbar() {
                             navigate("/products");
                             setCategoryOpen(false);
                           }}
-                          className="text-xs font-semibold text-indigo-500 transition-colors hover:text-indigo-700"
+                          className="cursor-pointer text-xs font-semibold text-indigo-500 transition-colors hover:text-indigo-700"
                         >
                           View All Products →
                         </button>
@@ -384,7 +384,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* ── Search ── */}
           <form
             onSubmit={handleSearch}
             className="hidden max-w-xs flex-1 md:block lg:max-w-sm"
@@ -407,16 +406,14 @@ export default function Navbar() {
               />
               <button
                 type="submit"
-                className="flex items-center justify-center bg-indigo-600 px-3.5 text-white transition hover:bg-indigo-500"
+                className="flex cursor-pointer items-center justify-center bg-indigo-600 px-3.5 text-white transition hover:bg-indigo-500"
               >
                 <CiSearch size={18} />
               </button>
             </div>
           </form>
 
-          {/* ── Right Actions ── */}
           <div className="ml-auto flex items-center gap-2 sm:-mr-0 md:-mr-0 md:gap-2">
-            {/* Cart */}
             {isBuyer && (
               <Link
                 to="/cart"
@@ -431,28 +428,26 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* User dropdown / Login */}
             {user ? (
               <div className="relative" ref={userRef}>
                 <button
                   onClick={() => setUserOpen(!userOpen)}
-                  className="avatar-btn flex items-center gap-2 rounded-xl border border-white/10 bg-white/6 px-2.5 py-1.5 text-sm font-medium text-slate-200 transition hover:border-indigo-400/40 hover:bg-white/10"
+                  className="avatar-btn flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/6 px-2.5 py-1.5 text-sm font-medium text-slate-200 transition hover:border-indigo-400/40 hover:bg-white/10"
                 >
-                  <div className="avatar-ring flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-[10px] font-bold text-white transition-all duration-200">
+                  <div className="avatar-ring flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-[10px] font-bold text-white transition-all duration-200">
                     {getInitials()}
                   </div>
-                  <span className="hidden max-w-[80px] truncate sm:block">
+                  <span className="hidden max-w-[80px] cursor-pointer truncate sm:block">
                     {user.firstName}
                   </span>
                   <ChevronDown
                     size={12}
-                    className={`text-slate-400 transition-transform duration-200 ${userOpen ? "rotate-180" : ""}`}
+                    className={`cursor-pointer text-slate-400 transition-transform duration-200 ${userOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
                 {userOpen && (
                   <div className="nav-dropdown dropdown-animate absolute top-12 right-0 z-50 w-64 rounded-2xl">
-                    {/* Profile header */}
                     <div className="border-b border-slate-100/70 px-4 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-md shadow-indigo-200">
@@ -474,7 +469,6 @@ export default function Navbar() {
                       </span>
                     </div>
 
-                    {/* Menu */}
                     <div className="p-1.5">
                       <Link
                         to="/my-account"
@@ -525,7 +519,7 @@ export default function Navbar() {
                     <div className="border-t border-slate-100 p-1.5">
                       <button
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-500 transition hover:bg-rose-50"
+                        className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-500 transition hover:bg-rose-50"
                       >
                         <LogOut size={14} /> Logout
                       </button>
@@ -536,23 +530,21 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:from-indigo-400 hover:to-violet-500 hover:shadow-indigo-700/50"
+                className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:from-indigo-400 hover:to-violet-500 hover:shadow-indigo-700/50"
               >
                 <User size={13} /> Login
               </Link>
             )}
 
-            
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="-mr-1 cursor-pointer flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
+              className="-mr-1 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
             >
               {mobileOpen ? <HiX size={17} /> : <HiMenu size={17} />}
             </button>
           </div>
         </div>
 
-        
         <div className="border-t border-white/5 px-4 py-2.5 md:hidden">
           <form onSubmit={handleSearch}>
             <div className="flex overflow-hidden rounded-xl border border-white/10 bg-white/6">
@@ -565,7 +557,7 @@ export default function Navbar() {
               />
               <button
                 type="submit"
-                className="flex items-center justify-center bg-indigo-600 px-4 text-white transition hover:bg-indigo-500"
+                className="flex cursor-pointer items-center justify-center bg-indigo-600 px-4 text-white transition hover:bg-indigo-500"
               >
                 <CiSearch size={18} />
               </button>
@@ -605,7 +597,7 @@ export default function Navbar() {
                   <div key={cat.id}>
                     <button
                       onClick={() => handleCategorySelect(cat.id)}
-                      className="nav-link-idle w-full rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-all hover:bg-white/5"
+                      className="nav-link-idle w-full cursor-pointer rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-all hover:bg-white/5"
                     >
                       {cat.title}
                     </button>
@@ -613,7 +605,7 @@ export default function Navbar() {
                       <button
                         key={child.id}
                         onClick={() => handleCategorySelect(child.id)}
-                        className="nav-link-idle w-full rounded-xl py-2 pl-8 text-left text-sm transition-all hover:bg-white/5"
+                        className="nav-link-idle w-full cursor-pointer rounded-xl py-2 pl-8 text-left text-sm transition-all hover:bg-white/5"
                         style={{ color: "rgba(148,163,184,0.7)" }}
                       >
                         └ {child.title}

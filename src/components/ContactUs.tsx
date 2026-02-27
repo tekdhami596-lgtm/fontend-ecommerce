@@ -17,7 +17,6 @@ import {
 import api from "../api/axios";
 import notify from "../helpers/notify";
 
-// ── FAQ Data ───────────────────────────────────────────
 const faqs = [
   {
     q: "How long does delivery take?",
@@ -45,7 +44,6 @@ const faqs = [
   },
 ];
 
-// ── Quick Help Cards ───────────────────────────────────
 const helpCards = [
   {
     icon: <ShoppingBag size={22} className="text-indigo-500" />,
@@ -67,7 +65,7 @@ const helpCards = [
   },
 ];
 
-// ── FAQ Item ───────────────────────────────────────────
+
 const FAQItem = ({ q, a }: { q: string; a: string }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -90,7 +88,6 @@ const FAQItem = ({ q, a }: { q: string; a: string }) => {
   );
 };
 
-// ── Main Page ──────────────────────────────────────────
 const ContactUs = () => {
   const [form, setForm] = useState({
     name: "",
@@ -128,7 +125,7 @@ const ContactUs = () => {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* ── Hero ── */}
+
       <div className="bg-indigo-700 px-6 py-16 text-center text-white">
         <span className="mb-3 inline-block text-xs font-bold tracking-widest text-indigo-300 uppercase">
           We're here to help
@@ -141,7 +138,7 @@ const ContactUs = () => {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-14">
-        {/* ── Quick Help Cards ── */}
+
         <div className="mb-14 grid gap-4 sm:grid-cols-3">
           {helpCards.map((card) => (
             <div
@@ -157,9 +154,9 @@ const ContactUs = () => {
           ))}
         </div>
 
-        {/* ── Form + Details ── */}
+    
         <div className="grid gap-10 lg:grid-cols-2">
-          {/* Contact Form */}
+
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <h2 className="mb-1 text-xl font-bold text-gray-900">
               Send a Message
@@ -243,9 +240,9 @@ const ContactUs = () => {
             </form>
           </div>
 
-          {/* Contact Details + Map */}
+    
           <div className="flex flex-col gap-6">
-            {/* Details Card */}
+       
             <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
               <h2 className="mb-6 text-xl font-bold text-gray-900">
                 Contact Details
@@ -311,7 +308,7 @@ const ContactUs = () => {
                 </li>
               </ul>
 
-              {/* Social */}
+          
               <div className="mt-6 border-t border-gray-100 pt-6">
                 <p className="mb-3 text-xs font-semibold tracking-wide text-gray-400 uppercase">
                   Follow Us
@@ -346,7 +343,7 @@ const ContactUs = () => {
               </div>
             </div>
 
-            {/* Google Map */}
+         
             <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
               <iframe
                 title="Dokomart Location"
@@ -362,7 +359,7 @@ const ContactUs = () => {
           </div>
         </div>
 
-        {/* ── FAQ ── */}
+      
         <div className="mt-14 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
           <div className="mb-6 text-center">
             <span className="mb-2 inline-block text-xs font-bold tracking-widest text-indigo-500 uppercase">

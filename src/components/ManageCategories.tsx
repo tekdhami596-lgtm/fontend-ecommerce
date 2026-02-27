@@ -12,7 +12,7 @@ interface Category {
 }
 
 interface Props {
-  // "admin" sees all; "seller" sees only own
+
   viewMode: "admin" | "seller";
 }
 
@@ -22,14 +22,12 @@ export default function ManageCategories({ viewMode }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formTitle, setFormTitle] = useState("");
   const [formParentId, setFormParentId] = useState<number | "">("");
   const [formLoading, setFormLoading] = useState(false);
 
-  // Collapse state for tree view
   const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
 
 
@@ -40,7 +38,7 @@ export default function ManageCategories({ viewMode }: Props) {
       const res = await api.get("/categories/flat");
       let data: Category[] = res.data.data;
 
-      // Sellers only see their own
+ 
       if (viewMode === "seller") {
         data = data.filter((c) => c.createdBy === user?.id);
       }
@@ -77,10 +75,10 @@ export default function ManageCategories({ viewMode }: Props) {
 
     try {
       if (editingId) {
-        // Update
+    
         await api.patch(`/categories/${editingId}`, { title: formTitle });
       } else {
-        // Create
+   
         await api.post("/categories", {
           title: formTitle,
           parentId: formParentId || null,
@@ -123,7 +121,6 @@ export default function ManageCategories({ viewMode }: Props) {
     });
   };
 
-  // Build tree for display
   const parents = categories.filter((c) => c.parentId === null);
   const childrenOf = (parentId: number) =>
     categories.filter((c) => c.parentId === parentId);
@@ -144,7 +141,7 @@ export default function ManageCategories({ viewMode }: Props) {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="mx-auto max-w-3xl">
-        {/* Header */}
+      
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
@@ -169,7 +166,7 @@ export default function ManageCategories({ viewMode }: Props) {
           </div>
         )}
 
-        {/* Inline Create/Edit Form */}
+ 
         {showForm && (
           <div className="mb-6 rounded-xl border border-purple-100 bg-white p-6 shadow-md">
             <h2 className="mb-4 text-lg font-semibold text-gray-800">
@@ -189,7 +186,6 @@ export default function ManageCategories({ viewMode }: Props) {
                 />
               </div>
 
-              {/* Parent category selector — only when creating */}
               {!editingId && (
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -235,7 +231,7 @@ export default function ManageCategories({ viewMode }: Props) {
           </div>
         )}
 
-        {/* Category Tree */}
+      
         {categories.length === 0 ? (
           <div className="rounded-xl bg-white p-10 text-center shadow-md">
             <p className="text-lg text-gray-400">No categories yet.</p>
@@ -254,7 +250,7 @@ export default function ManageCategories({ viewMode }: Props) {
                   key={parent.id}
                   className={idx !== 0 ? "border-t border-gray-100" : ""}
                 >
-                  {/* Parent Row */}
+             
                   <div className="group flex items-center justify-between px-5 py-4 hover:bg-gray-50">
                     <div className="flex items-center gap-2">
                       {subs.length > 0 && (
@@ -299,7 +295,7 @@ export default function ManageCategories({ viewMode }: Props) {
                     </div>
                   </div>
 
-                  {/* Children */}
+              
                   {!isCollapsed &&
                     subs.map((child) => (
                       <div
@@ -333,7 +329,7 @@ export default function ManageCategories({ viewMode }: Props) {
               );
             })}
 
-            {/* Orphan categories (parentId set but parent not visible) */}
+    
             {categories
               .filter(
                 (c) =>

@@ -9,8 +9,6 @@ interface Props {
   onChange: (ids: number[]) => void;
 }
 
-// ─── Defined OUTSIDE the parent component so React doesn't recreate it
-//     on every render — critical for useRef / indeterminate to work correctly.
 function IndeterminateCheckbox({
   checked,
   indeterminate,
@@ -40,7 +38,6 @@ function IndeterminateCheckbox({
   );
 }
 
-// ─── Normalize parentId: treat 0 / undefined / "null" / null all as null ───
 function normalizeParent(val: any): number | null {
   if (
     val === null ||
@@ -59,10 +56,8 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     (state: RootState) => state.categories,
   );
 
-  // All nodes start collapsed; clicking the chevron expands them
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
 
-  // Once categories load, mark all parent nodes as collapsed by default
   useEffect(() => {
     if (categories.length > 0) {
       const parentIds = categories
@@ -73,7 +68,7 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
       setCollapsed((prev) => {
         const next = { ...prev };
         parentIds.forEach((id) => {
-          if (next[id] === undefined) next[id] = true; // true = collapsed
+          if (next[id] === undefined) next[id] = true; 
         });
         return next;
       });
@@ -86,13 +81,10 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     }
   }, [categories.length, dispatch]);
 
-  // ─── Helpers ────────────────────────────────────────────────────────────────
 
-  /** Get direct children of parentId (null = root level) */
   const getChildren = (parentId: number | null) =>
     categories.filter((c) => normalizeParent(c.parentId) === parentId);
 
-  /** All descendant ids recursively */
   const getAllDescendantIds = (id: number): number[] => {
     const children = getChildren(id);
     return children.flatMap((child) => [
@@ -101,7 +93,6 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     ]);
   };
 
-  /** All ancestor ids from node up to root */
   const getAllAncestorIds = (id: number): number[] => {
     const node = categories.find((c) => c.id === id);
     if (!node) return [];
@@ -110,7 +101,6 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     return [parentId, ...getAllAncestorIds(parentId)];
   };
 
-  // ─── Selection state ─────────────────────────────────────────────────────────
 
   const isChecked = (id: number) => selectedIds.includes(id);
 
@@ -123,7 +113,6 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     return selectedCount > 0 && selectedCount < descendants.length;
   };
 
-  // ─── Toggle ──────────────────────────────────────────────────────────────────
 
   const toggle = (id: number) => {
     const descendants = getAllDescendantIds(id);
@@ -131,21 +120,19 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
     let next: number[];
 
     if (selectedIds.includes(id)) {
-      // Deselect self + all descendants
+
       const toRemove = new Set([id, ...descendants]);
       const afterRemove = selectedIds.filter((cid) => !toRemove.has(cid));
 
-      // Deselect ancestors that now have zero selected descendants
       const ancestorsToRemove = ancestors.filter((aid) =>
         getAllDescendantIds(aid).every((d) => !afterRemove.includes(d)),
       );
 
       next = afterRemove.filter((cid) => !ancestorsToRemove.includes(cid));
     } else {
-      // Select self + all descendants
+
       const merged = Array.from(new Set([...selectedIds, id, ...descendants]));
 
-      // Select ancestors whose ALL descendants are now fully selected
       const ancestorsToAdd = ancestors.filter((aid) =>
         getAllDescendantIds(aid).every((d) => merged.includes(d)),
       );
@@ -159,12 +146,11 @@ export default function CategoryCheckboxes({ selectedIds, onChange }: Props) {
   const toggleCollapse = (id: number) =>
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  // ─── Recursive renderer ───────────────────────────────────────────────────────
 
   const renderNode = (category: any, level = 0) => {
     const children = getChildren(category.id);
     const hasChildren = children.length > 0;
-    // undefined → not yet set → treat as expanded
+
     const isCollapsedNow = collapsed[category.id] === true;
     const checked = isChecked(category.id);
     const indeterminate = !checked && isIndeterminate(category.id);

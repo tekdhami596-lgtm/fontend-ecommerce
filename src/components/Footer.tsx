@@ -39,10 +39,10 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Main Footer */}
+ 
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand Column */}
+     
           <div>
             <h2 className="mb-3 text-2xl font-bold text-white">
               Doko<span className="text-indigo-400">mart</span>
@@ -81,7 +81,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Customer Service */}
+       
           <div>
             <h3 className="mb-4 text-sm font-semibold tracking-wider text-white uppercase">
               Customer Service
@@ -105,7 +105,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Quick Links */}
+    
           <div>
             <h3 className="mb-4 text-sm font-semibold tracking-wider text-white uppercase">
               Quick Links
@@ -129,7 +129,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
+     
           <div>
             <h3 className="mb-4 text-sm font-semibold tracking-wider text-white uppercase">
               Contact Details
@@ -164,13 +164,13 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Payment Methods */}
+   
         <div className="mt-10 border-t border-gray-700 pt-8">
           <p className="mb-3 text-center text-xs font-semibold tracking-wider text-gray-500 uppercase">
             We Accept
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {/* eSewa */}
+      
             <div className="flex items-center gap-2 rounded-md border border-gray-600 bg-gray-800 px-3 py-1.5">
               <img
                 src="https://esewa.com.np/common/images/esewa_logo.png"
@@ -179,7 +179,7 @@ const Footer = () => {
               />
             </div>
 
-            {/* Cash on Delivery */}
+        
             <div className="flex items-center gap-2 rounded-md border border-gray-600 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300">
               <Truck size={14} className="text-green-400" />
               <span>Cash on Delivery</span>
@@ -188,7 +188,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
       <div className="border-t border-gray-700 bg-gray-950">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4 text-xs text-gray-500">
           <span>

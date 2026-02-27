@@ -70,9 +70,9 @@ function SellerProduct() {
   return (
     <div className="min-h-screen bg-gray-100 px-3 py-6 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
+     
         <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
-          {/* Title row */}
+         
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
@@ -84,13 +84,12 @@ function SellerProduct() {
             </div>
             <button
               onClick={() => navigate("/seller/products/create")}
-              className="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 sm:px-4 sm:text-base"
+              className="shrink-0 cursor-pointer rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 sm:px-4 sm:text-base"
             >
               + Add Product
             </button>
           </div>
 
-          {/* Search — full width on all sizes */}
           <input
             type="text"
             placeholder="Search product..."
@@ -131,13 +130,12 @@ function SellerProduct() {
                 key={product.id}
                 className="group flex flex-col bg-white shadow-md transition hover:shadow-xl"
               >
-
                 <div className="relative h-40 overflow-hidden bg-gray-200 sm:h-44 md:h-48">
                   {product.images?.length > 0 ? (
                     <img
                       src={getImageUrl(product.images[0].path)}
                       alt={product.title}
-                      className="object-fit h-full w-full transition duration-300 group-hover:scale-105"
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-sm text-gray-400">

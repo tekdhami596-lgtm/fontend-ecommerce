@@ -32,7 +32,6 @@ export default function BannerCarousel() {
     fetchBanners();
   }, []);
 
-  // Auto slide every 4 seconds
   useEffect(() => {
     if (banners.length <= 1) return;
     const interval = setInterval(() => {
@@ -56,24 +55,24 @@ export default function BannerCarousel() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
-      {/* Slides */}
+    
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
         {banners.map((banner) => (
           <div key={banner.id} className="relative min-w-full">
-            {/* Banner Image */}
+        
             <img
               src={getImageUrl(banner.imagePath)}
               alt={banner.title}
               className="h-64 w-full object-cover sm:h-80 md:h-96"
             />
 
-            {/* Overlay */}
+        
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
 
-            {/* Text Content */}
+         
             <div className="absolute inset-0 flex flex-col items-start justify-center px-8 sm:px-12 md:px-16">
               <h2 className="mb-2 text-2xl font-bold text-white drop-shadow sm:text-3xl md:text-4xl">
                 {banner.title}
@@ -96,7 +95,7 @@ export default function BannerCarousel() {
         ))}
       </div>
 
-      {/* Prev / Next Buttons */}
+      
       {banners.length > 1 && (
         <>
           <button
@@ -114,7 +113,7 @@ export default function BannerCarousel() {
         </>
       )}
 
-      {/* Dot Indicators */}
+  
       {banners.length > 1 && (
         <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
           {banners.map((_, index) => (
