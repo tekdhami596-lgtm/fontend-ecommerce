@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import notify from "../../helpers/notify";
 import api from "../../api/axios";
 import getImageUrl from "../../helpers/imageUrl";
+import ProductGridSkeleton from "../../components/ProductGridSkeleton";
 
 type ProductImageType = {
   path: string;
@@ -99,21 +100,18 @@ function SellerProduct() {
           />
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-20">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+            <ProductGridSkeleton />
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div className="mb-4 rounded-lg bg-red-100 p-4 text-sm text-red-600">
             {error}
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && filteredProducts.length === 0 && (
           <div className="rounded-xl bg-white p-10 text-center shadow-md">
             <p className="text-lg text-gray-500">No products found.</p>
@@ -126,16 +124,15 @@ function SellerProduct() {
           </div>
         )}
 
-        {/* Product Grid */}
         {!loading && filteredProducts.length > 0 && (
           <div className="xs:grid-cols-2 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="group flex flex-col  bg-white shadow-md transition hover:shadow-xl"
+                className="group flex flex-col bg-white shadow-md transition hover:shadow-xl"
               >
                 {/* Image */}
-                <div className="relative h-40 overflow-hidden  bg-gray-200 sm:h-44 md:h-48">
+                <div className="relative h-40 overflow-hidden bg-gray-200 sm:h-44 md:h-48">
                   {product.images?.length > 0 ? (
                     <img
                       src={getImageUrl(product.images[0].path)}
@@ -149,21 +146,18 @@ function SellerProduct() {
                   )}
                 </div>
 
-                {/* Info */}
                 <div className="flex flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
                   <h2 className="truncate text-sm font-semibold text-gray-800 sm:text-base">
                     {product.title}
                   </h2>
 
-                  {/* Description — hidden on mobile */}
                   <p className="line-clamp-2 hidden text-sm text-gray-500 sm:block">
                     {product.shortDescription}
                   </p>
 
-                  {/* Price + Stock */}
                   <div className="mt-auto flex items-center justify-between pt-1 sm:pt-2">
                     <span className="text-sm font-bold text-indigo-600 sm:text-lg">
-                      Rs{product.price}
+                      Rs {product.price}
                     </span>
                     <span
                       className={`text-xs font-medium sm:text-sm ${
@@ -185,7 +179,6 @@ function SellerProduct() {
                     </span>
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     <button
                       onClick={() =>

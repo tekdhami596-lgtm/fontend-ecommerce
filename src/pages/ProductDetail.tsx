@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
 import { RootState } from "../redux/store";
 import getImageUrl from "../helpers/imageUrl";
+import ProductGridSkeleton from "../components/ProductGridSkeleton";
 
 type ProductImage = { path: string };
 
@@ -100,7 +101,7 @@ const ProductDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <p className="mt-20 text-center">Loading...</p>;
+  if (loading) return <p className="mt-20 text-center"><ProductGridSkeleton /></p>;
   if (!product) return <p className="mt-20 text-center">Product not found</p>;
 
   return (
@@ -110,7 +111,7 @@ const ProductDetailPage: React.FC = () => {
           <img
             src={getImageUrl(mainImage)}
             alt={product.title}
-            className="object-fit h-[400px] w-full rounded border"
+            className="object-fit h-[400px] w-full r"
           />
           <div className="mt-4 flex gap-2">
             {product.images.map((img, idx) => (
@@ -145,23 +146,24 @@ const ProductDetailPage: React.FC = () => {
             )}
 
             <h1 className="text-3xl font-bold">{product.title}</h1>
-            <p className="mt-2 text-xl text-green-600">₹{product.price}</p>
+            <p className="mt-2 text-xl text-green-600">Rs {product.price}</p>
             <p className="mt-2 text-gray-600">Stock: {product.stock}</p>
             <p className="mt-4">{product.shortDescription}</p>
             <p className="mt-4">{product.description}</p>
 
-            {/* Seller Info */}
+          
             <div className="mt-6 rounded border bg-gray-50 p-4">
               <h2 className="text-xl font-semibold">Seller Details</h2>
               {product.seller.storeName && (
                 <p className="font-medium text-indigo-600">
-                  🏪 {product.seller.storeName}
+                  Store Name: {product.seller.storeName}
                 </p>
               )}
               <p>
-                Name: {product.seller.firstName} {product.seller.lastName}
+                Seller Name: {product.seller.firstName}{" "}
+                {product.seller.lastName}
               </p>
-              <p>Email: {product.seller.email}</p>
+              <p>Seller email: {product.seller.email}</p>
             </div>
           </div>
 
