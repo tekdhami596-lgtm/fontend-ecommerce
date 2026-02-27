@@ -237,6 +237,7 @@ function EditSellerProduct() {
           <label className="font-semibold text-gray-700">Add New Images</label>
           <input
             type="file"
+            accept="image/webp,image/jpeg,image/png"
             multiple
             onChange={handleNewImages}
             className="mt-2 block"

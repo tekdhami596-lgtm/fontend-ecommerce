@@ -132,7 +132,7 @@ export default function AdminBanners() {
               <input
                 id="bannerImageInput"
                 type="file"
-                accept="image/*"
+                accept="image/webp,image/jpeg,image/png"
                 className="hidden"
                 onChange={handleImageChange}
               />
