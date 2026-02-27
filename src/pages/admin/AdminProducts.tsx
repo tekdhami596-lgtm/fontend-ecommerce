@@ -113,6 +113,8 @@ export default function AdminProducts() {
                           src={getImageUrl(product.images[0].path)}
                           className="h-full w-full object-cover"
                           alt={product.title}
+                          loading="lazy"
+                          decoding="async"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-xs text-gray-300">
@@ -202,6 +204,8 @@ export default function AdminProducts() {
                                   src={getImageUrl(product.images[0].path)}
                                   className="h-full w-full object-cover"
                                   alt={product.title}
+                                  loading="lazy"
+                                  decoding="async"
                                 />
                               ) : (
                                 <div className="flex h-full items-center justify-center text-xs text-gray-300">
