@@ -133,6 +133,8 @@ function SellerProduct() {
                     <img
                       src={getImageUrl(product.images[0].path)}
                       alt={product.title}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
