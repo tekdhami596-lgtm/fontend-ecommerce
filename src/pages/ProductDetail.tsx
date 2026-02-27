@@ -73,7 +73,7 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = async (product: Product) => {
     if (!user) {
       notify.error("Please login first");
-      navigate("/login", { state: { from: location.pathname } });
+      // navigate("/login", { state: { from: location.pathname } });
       return;
     }
     if (isSeller) {
