@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     },
     {
       label: "Total Revenue",
-      value: `Rs ${stats.totalRevenue.toFixed(2)}`,
+      value: `Rs ${Number(stats.totalRevenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
       color: "bg-green-50 text-green-600",
       link: "/admin/orders",

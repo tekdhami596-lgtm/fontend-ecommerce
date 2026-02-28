@@ -234,7 +234,8 @@ export default function AdminProducts() {
                           </div>
                         </td>
                         <td className="px-6 py-4 font-semibold text-indigo-600">
-                          ${product.price}
+                          Rs{" "}
+                          {Number(product.price || 0).toLocaleString("en-IN")}
                         </td>
                         <td className="px-6 py-4">
                           <span
