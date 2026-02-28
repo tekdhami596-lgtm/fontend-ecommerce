@@ -35,7 +35,7 @@ export default function ProductGridSkeleton() {
         <div className="h-9 w-24 animate-pulse rounded-xl bg-gray-200" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {Array.from({ length: PAGE_LIMIT }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
