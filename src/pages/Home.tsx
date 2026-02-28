@@ -386,7 +386,7 @@ export default function HomePage() {
                 <button
                   onClick={handleLoadMore}
                   disabled={loadingMore}
-                  className="flex items-center gap-2 rounded-lg bg-gray-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700 disabled:opacity-60"
+                  className="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700 disabled:opacity-60"
                 >
                   {loadingMore ? (
                     <>
