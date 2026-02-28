@@ -151,7 +151,7 @@ export default function AdminProducts() {
                       <div className="mt-2 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <span className="font-bold text-indigo-600">
-                            Rs {product.price.toLocaleString("en-IN")}
+                            Rs {Number(product.price).toLocaleString("en-IN")}
                           </span>
                           <span
                             className={`text-xs font-medium ${
