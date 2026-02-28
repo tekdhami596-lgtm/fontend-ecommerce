@@ -150,7 +150,11 @@ const ProductDetailPage: React.FC = () => {
 
             <h1 className="text-3xl font-bold">{product.title}</h1>
             <p className="mt-2 text-xl text-green-600">
-              Rs {product.price.toLocaleString("en-IN")}
+              Rs{" "}
+              {Number(product.price).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </p>
             <p className="mt-2 text-gray-600">Stock: {product.stock}</p>
             <p className="mt-4">{product.shortDescription}</p>

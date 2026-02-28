@@ -179,7 +179,9 @@ export default function Cart() {
                   </div>
                   <div className="mt-1 flex justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
                     <span>Total</span>
-                    <span>Rs. {totalAmount.toLocaleString("en-IN")}</span>
+                    <span>
+                      Rs. {Number(totalAmount).toLocaleString("en-IN")}
+                    </span>
                   </div>
                 </div>
 

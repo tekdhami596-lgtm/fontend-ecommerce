@@ -206,7 +206,6 @@ export default function Checkout() {
 
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
-          
           <div className="flex flex-col gap-4 lg:min-w-0 lg:flex-1">
             <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Your Items
@@ -295,7 +294,9 @@ export default function Checkout() {
                           </div>
                           <p className="font-semibold text-gray-800">
                             Rs.{" "}
-                            {(el.product.price * el.quantity).toLocaleString("en-IN")}
+                            {(el.product.price * el.quantity).toLocaleString(
+                              "en-IN",
+                            )}
                           </p>
                         </div>
                       </div>
@@ -307,7 +308,9 @@ export default function Checkout() {
                 <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
                   <span className="font-medium text-gray-600">Cart Total</span>
                   <span className="text-xl font-bold text-gray-900">
-                    Rs. {totalAmount.toLocaleString()}
+                    <span>
+                      Rs. {Number(totalAmount).toLocaleString("en-IN")}
+                    </span>
                   </span>
                 </div>
               </>
@@ -431,7 +434,7 @@ export default function Checkout() {
                     Subtotal ({cartItems.length}{" "}
                     {cartItems.length === 1 ? "item" : "items"})
                   </span>
-                  <span>Rs. {totalAmount.toLocaleString()}</span>
+                  <span>Rs. {Number(totalAmount).toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery</span>
@@ -439,7 +442,7 @@ export default function Checkout() {
                 </div>
                 <div className="mt-2 flex justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
                   <span>Total</span>
-                  <span>Rs. {totalAmount.toLocaleString()}</span>
+                  <span>Rs. {Number(totalAmount).toLocaleString("en-IN")}</span>
                 </div>
               </div>
             </div>
@@ -478,7 +481,7 @@ export default function Checkout() {
               ) : paymentMode === "esewa" ? (
                 `Pay Rs. ${totalAmount.toLocaleString()} via eSewa`
               ) : (
-                `Place Order · Rs. ${totalAmount.toLocaleString()}`
+                `Place Order · Rs. ${Number(totalAmount).toLocaleString("en-IN")}`
               )}
             </button>
 
