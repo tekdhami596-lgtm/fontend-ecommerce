@@ -318,14 +318,14 @@ export default function Navbar() {
             <div className="relative" ref={categoryRef}>
               <button
                 onClick={() => setCategoryOpen(!categoryOpen)}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 ${
+                className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 ${
                   categoryOpen ? "nav-link-active" : "nav-link-idle"
                 }`}
               >
                 Categories
                 <ChevronDown
                   size={13}
-                  className={`transition-transform duration-200 ${categoryOpen ? "rotate-180" : ""}`}
+                  className={`cursor-pointer transition-transform duration-200 ${categoryOpen ? "rotate-180" : ""}`}
                 />
               </button>
 

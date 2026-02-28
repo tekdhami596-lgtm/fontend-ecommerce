@@ -157,7 +157,6 @@ function SellerDashboard() {
           </div>
         </div>
 
-        {/* Stat Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={<Package size={22} className="text-indigo-600" />}
@@ -174,7 +173,7 @@ function SellerDashboard() {
           <StatCard
             icon={<DollarSign size={22} className="text-yellow-600" />}
             label="Total Revenue"
-            value={`$${stats.totalRevenue.toFixed(2)}`}
+            value={`Rs ${stats.totalRevenue.toFixed(2)}`}
             color="bg-yellow-100"
           />
           <StatCard
@@ -185,7 +184,6 @@ function SellerDashboard() {
           />
         </div>
 
-        {/* Recent Orders */}
         <div className="rounded-xl bg-white shadow-md">
           <div className="border-b px-6 py-4">
             <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
@@ -220,7 +218,7 @@ function SellerDashboard() {
                           ` +${order.orderItems.length - 1} more`}
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-800">
-                        $
+                        Rs
                         {order.orderItems
                           .reduce((sum, item) => sum + Number(item.price), 0)
                           .toFixed(2)}
@@ -243,9 +241,7 @@ function SellerDashboard() {
           )}
         </div>
 
-        {/* Bottom Section: Low Stock + Top Products */}
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Low Stock Alerts */}
           <div className="rounded-xl bg-white shadow-md">
             <div className="flex items-center gap-2 border-b px-6 py-4">
               <AlertTriangle size={18} className="text-yellow-500" />
@@ -283,7 +279,7 @@ function SellerDashboard() {
                           {product.title}
                         </p>
                         <p className="text-sm text-gray-400">
-                          ${product.price}
+                          Rs {product.price}
                         </p>
                       </div>
                     </div>
@@ -306,7 +302,6 @@ function SellerDashboard() {
             )}
           </div>
 
-          {/* Top Selling Products */}
           <div className="rounded-xl bg-white shadow-md">
             <div className="border-b px-6 py-4">
               <h2 className="text-lg font-bold text-gray-800">
