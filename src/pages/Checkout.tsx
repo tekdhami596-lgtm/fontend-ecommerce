@@ -233,7 +233,7 @@ export default function Checkout() {
                             : NoImage
                         }
                         alt={el.product.title}
-                        className="h-20 w-20 flex-shrink-0 rounded-xl bg-gray-100 object-cover lg:h-24 lg:w-24"
+                        className="h-20 w-20 shrink-0 rounded-xl bg-gray-100 object-cover lg:h-24 lg:w-24"
                       />
 
                       {/* Product info */}
@@ -254,7 +254,7 @@ export default function Checkout() {
                           </div>
                           <button
                             onClick={() => deleteCartItem(el.id)}
-                            className="flex-shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                            className="shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -295,7 +295,7 @@ export default function Checkout() {
                           </div>
                           <p className="font-semibold text-gray-800">
                             Rs.{" "}
-                            {(el.product.price * el.quantity).toLocaleString()}
+                            {(el.product.price * el.quantity).toLocaleString("en-IN")}
                           </p>
                         </div>
                       </div>
@@ -315,7 +315,7 @@ export default function Checkout() {
           </div>
 
           {/* ── RIGHT: Delivery & Payment ── */}
-          <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:w-[420px] xl:w-[460px]">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:w-105 xl:w-115">
             <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Delivery & Payment
             </h2>

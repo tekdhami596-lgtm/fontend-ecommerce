@@ -417,7 +417,7 @@ export default function Orders() {
                           Order Total
                         </span>
                         <span className="text-base font-extrabold text-green-600">
-                          Rs. {orderTotal}
+                          Rs. {orderTotal.toLocaleString("en-IN")}
                         </span>
                       </div>
                     </div>

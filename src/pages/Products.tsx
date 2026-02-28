@@ -396,7 +396,7 @@ function Products() {
 
               <div className="mt-auto flex items-center justify-between pt-1 sm:pt-2">
                 <span className="text-sm font-bold text-indigo-600 sm:text-lg">
-                  ${product.price}
+                  ${product.price.toLocaleString("en-IN")}
                 </span>
                 <span
                   className={`text-xs font-medium ${product.stock > 0 ? "text-green-600" : "text-red-500"}`}

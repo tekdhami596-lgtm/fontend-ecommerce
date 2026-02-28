@@ -363,7 +363,10 @@ export default function HomePage() {
                     )}
                     <div className="mt-auto flex items-center justify-between pt-2">
                       <span className="text-sm font-bold text-gray-900">
-                        ${Number(product.price).toFixed(2)}
+                        $
+                        {Number(product.price.toLocaleString("en-IN")).toFixed(
+                          2,
+                        )}
                       </span>
                       <button
                         onClick={() => handleAddToCart(product)}

@@ -289,12 +289,12 @@ export default function Navbar() {
             to="/"
             className="logo-wrap mr-2 flex shrink-0 items-center gap-2.5"
           >
-            <div className="logo-icon flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-lg shadow-indigo-900/50">
+            <div className="logo-icon flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-lg shadow-indigo-900/50">
               <img src={doko} />
             </div>
             <span className="brand-name text-[35px] font-extrabold tracking-tight text-white">
               Doko
-              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-[20px] text-transparent">
+              <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-[20px] text-transparent">
                 mart
               </span>
             </span>
@@ -413,7 +413,7 @@ export default function Navbar() {
             </div>
           </form>
 
-          <div className="ml-auto flex items-center gap-2 sm:-mr-0 md:-mr-0 md:gap-2">
+          <div className="ml-auto flex items-center gap-2 sm:mr-0 md:mr-0 md:gap-2">
             {isBuyer && (
               <Link
                 to="/cart"
@@ -421,7 +421,7 @@ export default function Navbar() {
               >
                 <IoCartOutline size={18} />
                 {totalQty > 0 && (
-                  <span className="cart-badge absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-rose-500 text-[9px] font-bold text-white shadow shadow-pink-900/50">
+                  <span className="cart-badge absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-linear-to-br from-pink-500 to-rose-500 text-[9px] font-bold text-white shadow shadow-pink-900/50">
                     {totalQty}
                   </span>
                 )}
@@ -434,10 +434,10 @@ export default function Navbar() {
                   onClick={() => setUserOpen(!userOpen)}
                   className="avatar-btn flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/6 px-2.5 py-1.5 text-sm font-medium text-slate-200 transition hover:border-indigo-400/40 hover:bg-white/10"
                 >
-                  <div className="avatar-ring flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-[10px] font-bold text-white transition-all duration-200">
+                  <div className="avatar-ring flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-[10px] font-bold text-white transition-all duration-200">
                     {getInitials()}
                   </div>
-                  <span className="hidden max-w-[80px] cursor-pointer truncate sm:block">
+                  <span className="hidden max-w-20 cursor-pointer truncate sm:block">
                     {user.firstName}
                   </span>
                   <ChevronDown
@@ -450,7 +450,7 @@ export default function Navbar() {
                   <div className="nav-dropdown dropdown-animate absolute top-12 right-0 z-50 w-64 rounded-2xl">
                     <div className="border-b border-slate-100/70 px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-md shadow-indigo-200">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-md shadow-indigo-200">
                           {getInitials()}
                         </div>
                         <div className="overflow-hidden">
@@ -530,7 +530,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:from-indigo-400 hover:to-violet-500 hover:shadow-indigo-700/50"
+                className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-linear-to-r from-indigo-500 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:from-indigo-400 hover:to-violet-500 hover:shadow-indigo-700/50"
               >
                 <User size={13} /> Login
               </Link>

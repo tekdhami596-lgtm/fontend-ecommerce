@@ -95,7 +95,6 @@ export default function Cart() {
           </div>
         ) : (
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
-            {/* ── Cart Items (takes remaining space) ── */}
             <div className="flex min-w-0 flex-1 flex-col gap-3">
               {cartItems.map((item) => (
                 <div
@@ -105,7 +104,7 @@ export default function Cart() {
                   <img
                     src={item.image ? getImageUrl(item.image) : NoImage}
                     alt={item.title}
-                    className="h-20 w-20 flex-shrink-0 rounded-xl object-cover sm:h-24 sm:w-24"
+                    className="h-20 w-20 shrink-0 rounded-xl object-cover sm:h-24 sm:w-24"
                   />
 
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
@@ -115,7 +114,7 @@ export default function Cart() {
                           {item.title}
                         </p>
                         <p className="mt-0.5 text-sm font-bold text-blue-600">
-                          Rs. {item.price.toLocaleString()}
+                          Rs. {item.price.toLocaleString("en-IN")}
                         </p>
                         <p className="text-xs text-gray-400">
                           Stock: {item.stock}
@@ -123,7 +122,7 @@ export default function Cart() {
                       </div>
                       <button
                         onClick={() => handleDelete(item)}
-                        className="flex-shrink-0 cursor-pointer rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                        className="shrink-0 cursor-pointer rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -154,7 +153,8 @@ export default function Cart() {
                         </button>
                       </div>
                       <p className="text-sm font-semibold text-gray-700">
-                        Rs. {(item.price * item.quantity).toLocaleString()}
+                        Rs.{" "}
+                        {(item.price * item.quantity).toLocaleString("en-IN")}
                       </p>
                     </div>
                   </div>
@@ -162,8 +162,7 @@ export default function Cart() {
               ))}
             </div>
 
-            {/* ── Order Summary (fixed width, won't overflow) ── */}
-            <div className="w-full flex-shrink-0 lg:sticky lg:top-24 lg:w-64">
+            <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-64">
               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <h2 className="mb-4 text-lg font-bold text-gray-800">
                   Order Summary
@@ -180,7 +179,7 @@ export default function Cart() {
                   </div>
                   <div className="mt-1 flex justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
                     <span>Total</span>
-                    <span>Rs. {totalAmount.toLocaleString()}</span>
+                    <span>Rs. {totalAmount.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
 
