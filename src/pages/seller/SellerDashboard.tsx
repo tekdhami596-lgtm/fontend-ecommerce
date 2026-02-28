@@ -346,7 +346,7 @@ function SellerDashboard() {
                       </div>
                     </div>
                     <span className="font-semibold text-green-600">
-                      ${Number(item.totalRevenue).toFixed(2)}
+                      Rs {Number(item.totalRevenue).toFixed(2)}
                     </span>
                   </li>
                 ))}

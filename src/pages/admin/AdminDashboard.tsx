@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     },
     {
       label: "Total Revenue",
-      value: `$${stats.totalRevenue.toFixed(2)}`,
+      value: `Rs ${stats.totalRevenue.toFixed(2)}`,
       icon: DollarSign,
       color: "bg-green-50 text-green-600",
       link: "/admin/orders",
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-indigo-600">
-                        ${calcTotal(order.orderItems).toFixed(2)}
+                        Rs {calcTotal(order.orderItems).toFixed(2)}
                       </p>
                       <span
                         className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
