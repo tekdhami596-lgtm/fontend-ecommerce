@@ -245,6 +245,16 @@ function Products() {
           {searchQuery && (
             <span className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-0.5 text-xs font-medium text-indigo-600">
               🔍 "{searchQuery}"
+              <button
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams);
+                  params.delete("search");
+                  navigate(`/products?${params.toString()}`);
+                }}
+                className="ml-1.5 text-indigo-400 hover:text-red-500"
+              >
+                ✕
+              </button>
             </span>
           )}
           {categoryQuery && (
