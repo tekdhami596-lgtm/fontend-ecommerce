@@ -29,7 +29,7 @@ function SkeletonCard() {
 
 export default function ProductGridSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8">
+    <div className="px-3 py-4 sm:px-6">
       <div className="mb-5 flex items-center justify-between">
         <div className="h-5 w-32 animate-pulse rounded-md bg-gray-200" />
         <div className="h-9 w-24 animate-pulse rounded-xl bg-gray-200" />

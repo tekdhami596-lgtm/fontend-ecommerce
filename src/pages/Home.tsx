@@ -310,9 +310,7 @@ export default function HomePage() {
 
       <div className="mx-auto max-w-7xl px-3 pb-10 sm:px-6">
         {loading ? (
-          <div className="flex items-center justify-center py-24">
-            <ProductGridSkeleton />
-          </div>
+          <ProductGridSkeleton />
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-400">
             <SlidersHorizontal size={40} className="mb-3 opacity-40" />
