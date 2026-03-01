@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, Trash2, Users } from "lucide-react";
 import api from "../../api/axios";
+import notify from "../../helpers/notify";
 
 interface User {
   id: number;
@@ -52,9 +53,11 @@ export default function AdminUsers() {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this user permanently?")) return;
     try {
-      await api.delete(`/admin/users/${id}`);
+      const response = await api.delete(`/admin/users/${id}`);
+      notify.success(response.data.message);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (err: any) {
+      console.error(err);
       alert(err.response?.data?.message || "Failed");
     }
   };
