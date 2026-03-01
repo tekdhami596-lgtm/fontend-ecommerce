@@ -74,9 +74,7 @@ export default function HomePage() {
   const user = useSelector((state: RootState) => state.user.data);
   const isSeller = user?.role === "seller";
 
-  // ── Read products from Redux store ──────────────────────────
-  // This means when AdminUsers deletes a seller and dispatches
-  // removeProductsBySeller, this page updates automatically
+
   const reduxProducts = useSelector((state: RootState) => state.products.items);
 
   const { tree: categoryTree = [] } = useSelector(
@@ -153,7 +151,7 @@ export default function HomePage() {
         const incoming = res.data.data || [];
         const total = res.data.total ?? res.data.count ?? incoming.length;
         setTotalCount(total);
-        // Store in Redux — so removeProductsBySeller works across pages
+        
         if (reset) {
           dispatch(clearProducts());
         }
