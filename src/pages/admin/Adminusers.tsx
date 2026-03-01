@@ -57,8 +57,9 @@ export default function AdminUsers() {
       notify.success(response.data.message);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (err: any) {
-      console.error("Delete user error:", err.message);
-      alert(err.response?.data?.message || "Failed");
+      const message = err.response?.data?.message || "Failed to delete user";
+      console.error("Delete user error:", message);
+      notify.error(message); 
     }
   };
 
