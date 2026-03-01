@@ -164,7 +164,7 @@ function SignupForm() {
               key={r}
               type="button"
               onClick={() => handleRoleChange(r)}
-              className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition-all ${
+              className={`flex-1 cursor-pointer rounded-lg border py-2.5 text-sm font-medium transition-all ${
                 formData.role === r
                   ? "border-pink-500 bg-pink-50 text-pink-600"
                   : "border-gray-200 text-gray-400 hover:border-gray-300"

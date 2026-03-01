@@ -251,7 +251,7 @@ export default function AdminProducts() {
                         <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => handleDelete(product.id)}
-                            className="rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
+                            className="cursor-pointer rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                             title="Remove product"
                           >
                             <Trash2 size={15} />

@@ -284,7 +284,7 @@ export default function AdminUsers() {
                           {user.role !== "admin" && (
                             <button
                               onClick={() => handleDelete(user)}
-                              className="ml-3 shrink-0 rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
+                              className="ml-3 cursor-pointer shrink-0 rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                             >
                               <Trash2 size={15} />
                             </button>
