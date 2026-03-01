@@ -57,7 +57,7 @@ export default function AdminUsers() {
       notify.success(response.data.message);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (err: any) {
-      console.error(err);
+      console.error("Delete user error:", err.message);
       alert(err.response?.data?.message || "Failed");
     }
   };
@@ -103,7 +103,7 @@ export default function AdminUsers() {
             />
             <button
               type="submit"
-              className="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-700 sm:px-4"
+              className="shrink-0 cursor-pointer rounded-lg bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-700 sm:px-4"
             >
               <Search size={16} />
             </button>
@@ -117,7 +117,7 @@ export default function AdminUsers() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`-mb-px border-b-2 px-3 py-2.5 text-sm font-semibold capitalize transition-colors sm:px-5 ${
+                className={`-mb-px cursor-pointer border-b-2 px-3 py-2.5 text-sm font-semibold capitalize transition-colors sm:px-5 ${
                   activeTab === tab
                     ? "border-indigo-600 text-indigo-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
@@ -125,7 +125,7 @@ export default function AdminUsers() {
               >
                 {tabLabel[tab]}
                 <span
-                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs sm:ml-2 sm:px-2 ${
+                  className={`ml-1.5 cursor-pointer rounded-full px-1.5 py-0.5 text-xs sm:ml-2 sm:px-2 ${
                     activeTab === tab
                       ? "bg-indigo-100 text-indigo-600"
                       : "bg-gray-100 text-gray-500"
@@ -212,7 +212,7 @@ export default function AdminUsers() {
                                 {user.role !== "admin" && (
                                   <button
                                     onClick={() => handleDelete(user.id)}
-                                    className="rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
+                                    className="cursor-pointer rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                                     title="Delete user"
                                   >
                                     <Trash2 size={16} />
@@ -274,7 +274,7 @@ export default function AdminUsers() {
                           {user.role !== "admin" && (
                             <button
                               onClick={() => handleDelete(user.id)}
-                              className="ml-3 shrink-0 rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
+                              className="ml-3 shrink-0 cursor-pointer rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                               title="Delete user"
                             >
                               <Trash2 size={15} />
