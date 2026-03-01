@@ -1,7 +1,9 @@
+import "../index.css";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchCategoryTree, CategoryTree } from "../redux/slice/categorySlice";
+import { appendProducts, clearProducts } from "../redux/slice/Productslice";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import { addToCart as addToCartRedux } from "../redux/slice/cartSlice";
@@ -17,17 +19,6 @@ import notify from "../helpers/notify";
 import getImageUrl from "../helpers/imageUrl";
 import BannerCarousel from "../components/BannerCarousel";
 import ProductGridSkeleton from "../components/ProductGridSkeleton";
-
-type ProductImageType = { path: string };
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-  stock: number;
-  shortDescription: string;
-  images: ProductImageType[];
-  categories: { id: number; title: string }[];
-};
 
 type SortOption =
   | "default"
@@ -46,9 +37,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 
 const PAGE_LIMIT = 10;
 
-function flattenTree(
-  nodes: CategoryTree[] = [],
-): { id: number; title: string; parentId?: number }[] {
+function flattenTree(nodes: CategoryTree[] = []) {
   const result: { id: number; title: string; parentId?: number }[] = [];
   const traverse = (items: CategoryTree[], parentId?: number) => {
     if (!items || !Array.isArray(items)) return;
@@ -63,7 +52,7 @@ function flattenTree(
 
 function getAllDescendantIds(
   categoryId: number,
-  allCategories: { id: number; parentId?: number }[] = [],
+  allCategories: { id: number; parentId?: number }[],
 ): number[] {
   const ids: number[] = [categoryId];
   const findChildren = (parentId: number) => {
@@ -83,13 +72,17 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useSelector((state: RootState) => state.user.data);
-
   const isSeller = user?.role === "seller";
+
+  // ── Read products from Redux store ──────────────────────────
+  // This means when AdminUsers deletes a seller and dispatches
+  // removeProductsBySeller, this page updates automatically
+  const reduxProducts = useSelector((state: RootState) => state.products.items);
+
   const { tree: categoryTree = [] } = useSelector(
     (state: RootState) => state.categories,
   );
 
-  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
@@ -107,13 +100,11 @@ export default function HomePage() {
     [categoryTree],
   );
   const topLevelCategories = useMemo(() => categoryTree ?? [], [categoryTree]);
-
-  const hasMore = products.length < totalCount;
+  const hasMore = reduxProducts.length < totalCount;
 
   useEffect(() => {
-    if (!categoryTree || categoryTree.length === 0) {
+    if (!categoryTree || categoryTree.length === 0)
       dispatch(fetchCategoryTree());
-    }
   }, []);
 
   useEffect(() => {
@@ -123,7 +114,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (activeCategoryId && flatCategories.length === 0) return;
-    setProducts([]);
+    dispatch(clearProducts());
     setPage(1);
     setTotalCount(0);
     doFetch(1, true);
@@ -159,11 +150,14 @@ export default function HomePage() {
         reset ? setLoading(true) : setLoadingMore(true);
         const params = buildParams(pageNum);
         const res = await api.get(`/products?${params.toString()}`);
-        const incoming: Product[] = res.data.data || [];
-        const total: number =
-          res.data.total ?? res.data.count ?? incoming.length;
+        const incoming = res.data.data || [];
+        const total = res.data.total ?? res.data.count ?? incoming.length;
         setTotalCount(total);
-        setProducts((prev) => (reset ? incoming : [...prev, ...incoming]));
+        // Store in Redux — so removeProductsBySeller works across pages
+        if (reset) {
+          dispatch(clearProducts());
+        }
+        dispatch(appendProducts(incoming));
       } catch (err) {
         console.error(err);
       } finally {
@@ -171,7 +165,7 @@ export default function HomePage() {
         setLoadingMore(false);
       }
     },
-    [buildParams],
+    [buildParams, dispatch],
   );
 
   const handleLoadMore = () => {
@@ -191,7 +185,7 @@ export default function HomePage() {
     setSortOpen(false);
   };
 
-  const handleAddToCart = async (product: Product) => {
+  const handleAddToCart = async (product: any) => {
     if (!user) {
       notify.error("Please login first");
       navigate("/login", { state: { from: location.pathname } });
@@ -311,7 +305,7 @@ export default function HomePage() {
       <div className="mx-auto max-w-7xl px-3 pb-10 sm:px-6">
         {loading ? (
           <ProductGridSkeleton />
-        ) : products.length === 0 ? (
+        ) : reduxProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-400">
             <SlidersHorizontal size={40} className="mb-3 opacity-40" />
             <p className="text-lg font-medium">No products found</p>
@@ -320,7 +314,7 @@ export default function HomePage() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {products.map((product) => (
+              {reduxProducts.map((product) => (
                 <div
                   key={product.id}
                   className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md"
@@ -349,7 +343,6 @@ export default function HomePage() {
                       )}
                     </div>
                   </Link>
-
                   <div className="flex flex-1 flex-col p-3">
                     <Link to={`/products/${product.id}`}>
                       <h3 className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-gray-600">

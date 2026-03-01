@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Search, Trash2, Users } from "lucide-react";
-import api from "../../api/axios";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { removeProductsBySeller } from "../../redux/slice/Productslice";
 import notify from "../../helpers/notify";
+import api from "../../api/axios";
 
 interface User {
   id: number;
@@ -22,6 +25,8 @@ const TABS = ["all", "buyer", "seller", "admin"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminUsers() {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -50,16 +55,24 @@ export default function AdminUsers() {
     fetchUsers(activeTab, search);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (user: User) => {
     if (!window.confirm("Delete this user permanently?")) return;
     try {
-      const response = await api.delete(`/admin/users/${id}`);
+      const response = await api.delete(`/admin/users/${user.id}`);
       notify.success(response.data.message);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+
+      // Remove user from local state
+      setUsers((prev) => prev.filter((u) => u.id !== user.id));
+
+      // If seller — wipe their products from Redux so HomePage &
+      // Products pages stop showing stale items immediately
+      if (user.role === "seller") {
+        dispatch(removeProductsBySeller(user.id));
+      }
     } catch (err: any) {
       const message = err.response?.data?.message || "Failed to delete user";
       console.error("Delete user error:", message);
-      notify.error(message); 
+      notify.error(message);
     }
   };
 
@@ -104,21 +117,21 @@ export default function AdminUsers() {
             />
             <button
               type="submit"
-              className="shrink-0 cursor-pointer rounded-lg bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-700 sm:px-4"
+              className="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-700 sm:px-4"
             >
               <Search size={16} />
             </button>
           </form>
         </div>
 
-        {/* Tabs — horizontally scrollable on mobile */}
+        {/* Tabs */}
         <div className="mb-6 overflow-x-auto">
           <div className="flex min-w-max gap-1 border-b border-gray-200">
             {TABS.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`-mb-px cursor-pointer border-b-2 px-3 py-2.5 text-sm font-semibold capitalize transition-colors sm:px-5 ${
+                className={`-mb-px border-b-2 px-3 py-2.5 text-sm font-semibold capitalize transition-colors sm:px-5 ${
                   activeTab === tab
                     ? "border-indigo-600 text-indigo-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
@@ -126,7 +139,7 @@ export default function AdminUsers() {
               >
                 {tabLabel[tab]}
                 <span
-                  className={`ml-1.5 cursor-pointer rounded-full px-1.5 py-0.5 text-xs sm:ml-2 sm:px-2 ${
+                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs sm:ml-2 sm:px-2 ${
                     activeTab === tab
                       ? "bg-indigo-100 text-indigo-600"
                       : "bg-gray-100 text-gray-500"
@@ -163,7 +176,7 @@ export default function AdminUsers() {
                     </div>
                   )}
 
-                  {/* ── Desktop Table (md+) ── */}
+                  {/* Desktop Table */}
                   <div className="hidden overflow-hidden rounded-2xl bg-white shadow-sm md:block">
                     <table className="w-full text-sm">
                       <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
@@ -212,9 +225,8 @@ export default function AdminUsers() {
                               <td className="px-6 py-4 text-right">
                                 {user.role !== "admin" && (
                                   <button
-                                    onClick={() => handleDelete(user.id)}
-                                    className="cursor-pointer rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
-                                    title="Delete user"
+                                    onClick={() => handleDelete(user)}
+                                    className="rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                                   >
                                     <Trash2 size={16} />
                                   </button>
@@ -227,7 +239,7 @@ export default function AdminUsers() {
                     </table>
                   </div>
 
-                  {/* ── Mobile Cards (below md) ── */}
+                  {/* Mobile Cards */}
                   <div className="flex flex-col gap-3 md:hidden">
                     {roleUsers.length === 0 ? (
                       <div className="rounded-2xl bg-white py-12 text-center text-gray-400 shadow-sm">
@@ -243,7 +255,6 @@ export default function AdminUsers() {
                           key={user.id}
                           className="flex items-center justify-between rounded-2xl bg-white px-4 py-3.5 shadow-sm"
                         >
-                          {/* Avatar + Info */}
                           <div className="flex items-center gap-3 overflow-hidden">
                             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
                               {user.firstName[0]}
@@ -270,13 +281,10 @@ export default function AdminUsers() {
                               </div>
                             </div>
                           </div>
-
-                          {/* Delete */}
                           {user.role !== "admin" && (
                             <button
-                              onClick={() => handleDelete(user.id)}
-                              className="ml-3 shrink-0 cursor-pointer rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
-                              title="Delete user"
+                              onClick={() => handleDelete(user)}
+                              className="ml-3 shrink-0 rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100"
                             >
                               <Trash2 size={15} />
                             </button>
