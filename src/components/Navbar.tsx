@@ -284,7 +284,7 @@ export default function Navbar() {
       <style>{navStyles}</style>
 
       <nav className="nav-root nav-bg sticky top-0 z-50 border-b border-white/5">
-        <div className="relative mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+        <div className="relative mx-auto flex max-w-7xl items-center gap-2 overflow-hidden px-4 py-3 sm:gap-3">
           <NavLink
             to="/"
             className="logo-wrap mr-2 flex shrink-0 items-center gap-2.5"
@@ -292,9 +292,9 @@ export default function Navbar() {
             <div className="logo-icon flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-lg shadow-indigo-900/50">
               <img src={doko} />
             </div>
-            <span className="brand-name text-[35px] font-extrabold tracking-tight text-white">
+            <span className="brand-name text-[22px] font-extrabold tracking-tight text-white sm:text-[35px]">
               Doko
-              <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-[20px] text-transparent">
+              <span className="bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-[13px] text-transparent sm:text-[20px]">
                 mart
               </span>
             </span>
@@ -413,7 +413,7 @@ export default function Navbar() {
             </div>
           </form>
 
-          <div className="ml-auto flex items-center gap-2 sm:mr-0 md:mr-0 md:gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
             {isBuyer && (
               <Link
                 to="/cart"
@@ -538,7 +538,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="-mr-1 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 md:hidden"
             >
               {mobileOpen ? <HiX size={17} /> : <HiMenu size={17} />}
             </button>
@@ -608,7 +608,7 @@ export default function Navbar() {
                         className="nav-link-idle w-full cursor-pointer rounded-xl py-2 pl-8 text-left text-sm transition-all hover:bg-white/5"
                         style={{ color: "rgba(148,163,184,0.7)" }}
                       >
-                        └ {child.title}
+                        {child.title}
                       </button>
                     ))}
                   </div>
