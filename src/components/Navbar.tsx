@@ -283,8 +283,8 @@ export default function Navbar() {
     <>
       <style>{navStyles}</style>
 
-      <nav className="nav-root nav-bg sticky top-0 z-50 border-b border-white/5">
-        <div className="relative mx-auto flex max-w-7xl items-center gap-2 overflow-hidden px-4 py-3 sm:gap-3">
+      <nav className="nav-root nav-bg sticky top-0 z-50 overflow-x-clip border-b border-white/5">
+        <div className="relative mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-3">
           <NavLink
             to="/"
             className="logo-wrap mr-2 flex shrink-0 items-center gap-2.5"
