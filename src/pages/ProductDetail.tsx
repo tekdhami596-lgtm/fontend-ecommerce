@@ -61,8 +61,11 @@ const ProductDetailPage: React.FC = () => {
         const res = await api.get(`/products/${productId}`);
         setProduct(res.data.data);
         setMainImage(res.data.data.images[0]?.path || NoImage);
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          notify.error("This product is no longer available");
+          navigate("/"); 
+        }
       } finally {
         setLoading(false);
       }
