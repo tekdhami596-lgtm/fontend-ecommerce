@@ -115,7 +115,6 @@ function SignupForm() {
     if (!validate()) return;
     setLoading(true);
 
-    // send null for empty optional fields so backend stores null cleanly
     const payload = {
       ...formData,
       gender: formData.gender || null,
@@ -128,6 +127,9 @@ function SignupForm() {
       navigate("/login");
     } catch (err: any) {
       if (err.response?.data) {
+        console.log("err.response:", err.response); 
+        console.log("err.response?.data:", err.response?.data); 
+
         setApiError(err.response.data.errors || []);
         notify.error(err.response.data.message || "Signup failed");
       } else {
