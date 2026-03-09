@@ -10,7 +10,7 @@ function MainLayout() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <Navbar />
       <Outlet />
       <Footer />
