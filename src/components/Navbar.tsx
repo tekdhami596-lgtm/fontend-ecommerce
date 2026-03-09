@@ -42,7 +42,6 @@ const navStyles = `
   /* Subtle noise texture on nav */
   .nav-bg {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
-    position: relative;
   }
   .nav-bg::before {
     content: '';
@@ -283,7 +282,7 @@ export default function Navbar() {
     <>
       <style>{navStyles}</style>
 
-      <nav className="nav-root nav-bg fixed top-0 z-50 border-b border-white/5">
+      <nav className="nav-root nav-bg sticky top-0 z-50 border-b border-white/5">
         <div className="relative mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-3">
           <NavLink
             to="/"
